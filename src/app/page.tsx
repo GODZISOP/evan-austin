@@ -1,30 +1,63 @@
 "use client";
 
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
-import { Search, Maximize } from "lucide-react";
+import { Search, Maximize, ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
-const ScrollRevealWord = ({ children, progress, range }: { children: React.ReactNode, progress: any, range: [number, number] }) => {
-  const color = useTransform(progress, range, ["#525252", "#ffffff"]);
+const ScrollRevealWord = ({ children, progress, range, colors = ["#525252", "#ffffff"] }: { children: React.ReactNode, progress: any, range: [number, number], colors?: string[] }) => {
+  const color = useTransform(progress, range, colors);
   return <motion.span style={{ color }}>{children}</motion.span>;
 };
 
 const JourneySection = () => {
-  const cardTransition = { duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 };
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeCard, setActiveCard] = useState(1); // 1 is the middle card initially
 
-  const leftCardVariants = {
-    hidden: { x: "0%", y: "0%", rotateY: 0, rotateZ: 0 },
-    visible: { x: "-110%", y: "8%", rotateY: 165, rotateZ: -6, transition: cardTransition }
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const cardTransition = { duration: 1.0, ease: [0.22, 1, 0.36, 1] }; // faster transition for clicks
+
+  const baseVariants = {
+    left: { 
+      x: isMobile ? "-20%" : "-110%", 
+      y: isMobile ? "8%" : "8%", 
+      rotateY: isMobile ? 175 : 165, 
+      rotateZ: isMobile ? -8 : -6, 
+      scale: 1,
+      transition: cardTransition 
+    },
+    right: { 
+      x: isMobile ? "20%" : "110%", 
+      y: isMobile ? "12%" : "8%", 
+      rotateY: isMobile ? 185 : 195, 
+      rotateZ: isMobile ? 8 : 6, 
+      scale: 1,
+      transition: cardTransition 
+    },
+    middle: { 
+      x: "0%", 
+      y: isMobile ? "0%" : "-4%", 
+      scale: isMobile ? 1 : 1.05, 
+      rotateY: 180, 
+      rotateZ: 0,
+      transition: cardTransition 
+    }
   };
 
-  const rightCardVariants = {
-    hidden: { x: "0%", y: "0%", rotateY: 0, rotateZ: 0 },
-    visible: { x: "110%", y: "8%", rotateY: 195, rotateZ: 6, transition: cardTransition }
-  };
-
-  const middleCardVariants = {
-    hidden: { x: "0%", y: "0%", scale: 1, rotateY: 0 },
-    visible: { x: "0%", y: "-4%", scale: 1.05, rotateY: 180, transition: cardTransition }
+  const getCardVariants = (index: number) => {
+    let visibleVariant = baseVariants.right;
+    if (index === activeCard) visibleVariant = baseVariants.middle;
+    else if (index === (activeCard - 1 + 3) % 3) visibleVariant = baseVariants.left;
+    
+    return {
+      hidden: { x: "0%", y: "0%", rotateY: 0, rotateZ: 0, scale: 1 },
+      visible: visibleVariant
+    };
   };
 
   return (
@@ -47,22 +80,27 @@ const JourneySection = () => {
         whileInView="visible"
         viewport={{ once: false, amount: 0.4 }}
         style={{ perspective: 1200 }} 
-        className="relative w-[280px] md:w-[320px] lg:w-[360px] h-[380px] md:h-[440px] lg:h-[500px] z-10 flex items-center justify-center mt-4 md:mt-8"
+        className="relative w-[260px] md:w-[320px] lg:w-[360px] h-[360px] md:h-[440px] lg:h-[500px] z-10 flex items-center justify-center mt-4 md:mt-8"
       >
         
-        {/* Left Card */}
+        {/* Left Card: BUILD YOUR FOUNDATION (Index 0) */}
         <motion.div 
-          variants={leftCardVariants}
-          style={{ transformStyle: "preserve-3d" }}
-          className="absolute inset-0 origin-bottom"
+          variants={getCardVariants(0)}
+          onClick={() => setActiveCard(0)}
+          style={{ transformStyle: "preserve-3d", zIndex: activeCard === 0 ? 20 : 10 }}
+          className="absolute inset-0 origin-bottom cursor-pointer group"
         >
           {/* Front Face (Red Cover) */}
           <div className="absolute inset-0 bg-[#d92323] rounded-2xl shadow-[0_0_50px_rgba(217,35,35,0.4)] [backface-visibility:hidden]" />
           
           {/* Back Face (Gray Content) */}
           <div className="absolute inset-0 bg-[#e6e6e6] rounded-2xl p-8 lg:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col justify-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
-             <div className="mb-auto text-black relative z-10">
+             <div className="mb-auto w-full flex justify-between items-start text-black relative z-10">
                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+               <div className="text-right">
+                 <div className="text-2xl font-bold tracking-tight">$49</div>
+                 <div className="text-[10px] uppercase tracking-widest opacity-60 font-bold">/month</div>
+               </div>
              </div>
              <div className="relative z-10">
                <h3 className="text-3xl lg:text-4xl font-bold text-black mb-4 leading-tight tracking-tight">BUILD YOUR<br/>FOUNDATION</h3>
@@ -71,19 +109,24 @@ const JourneySection = () => {
           </div>
         </motion.div>
 
-        {/* Right Card */}
+        {/* Right Card: BREAK YOUR PLATEAU (Index 2) */}
         <motion.div 
-          variants={rightCardVariants}
-          style={{ transformStyle: "preserve-3d" }}
-          className="absolute inset-0 origin-bottom"
+          variants={getCardVariants(2)}
+          onClick={() => setActiveCard(2)}
+          style={{ transformStyle: "preserve-3d", zIndex: activeCard === 2 ? 20 : 10 }}
+          className="absolute inset-0 origin-bottom cursor-pointer group"
         >
           {/* Front Face (Red Cover) */}
           <div className="absolute inset-0 bg-[#d92323] rounded-2xl shadow-[0_0_50px_rgba(217,35,35,0.4)] [backface-visibility:hidden]" />
           
           {/* Back Face (Dark Content) */}
           <div className="absolute inset-0 bg-[#121212] rounded-2xl p-8 lg:p-10 shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/5 flex flex-col justify-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
-             <div className="mb-auto text-white opacity-80 relative z-10">
+             <div className="mb-auto w-full flex justify-between items-start text-white opacity-80 relative z-10">
                <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3c0 4.97-4.03 9-9 9 4.97 0 9 4.03 9 9 0-4.97 4.03-9 9-9-4.97 0-9-4.03-9-9z"/></svg>
+               <div className="text-right opacity-100">
+                 <div className="text-2xl font-bold tracking-tight">$149</div>
+                 <div className="text-[10px] uppercase tracking-widest opacity-60 font-bold">/month</div>
+               </div>
              </div>
              <div className="relative z-10">
                <h3 className="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight tracking-tight">BREAK YOUR<br/>PLATEAU</h3>
@@ -92,19 +135,24 @@ const JourneySection = () => {
           </div>
         </motion.div>
 
-        {/* Middle Card */}
+        {/* Middle Card: PROGRESSIVE OVERLOAD (Index 1) */}
         <motion.div 
-          variants={middleCardVariants}
-          style={{ transformStyle: "preserve-3d" }}
-          className="absolute inset-0 origin-bottom z-10"
+          variants={getCardVariants(1)}
+          onClick={() => setActiveCard(1)}
+          style={{ transformStyle: "preserve-3d", zIndex: activeCard === 1 ? 20 : 10 }}
+          className="absolute inset-0 origin-bottom cursor-pointer group"
         >
           {/* Front Face (Red Cover) */}
           <div className="absolute inset-0 bg-[#d92323] rounded-2xl shadow-[0_30px_60px_rgba(217,35,35,0.4)] [backface-visibility:hidden]" />
           
           {/* Back Face (Red Content) */}
           <div className="absolute inset-0 bg-[#d92323] rounded-2xl p-8 lg:p-10 shadow-[0_30px_60px_rgba(217,35,35,0.4)] flex flex-col justify-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
-             <div className="mb-auto text-white relative z-10">
+             <div className="mb-auto w-full flex justify-between items-start text-white relative z-10">
                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/></svg>
+               <div className="text-right">
+                 <div className="text-2xl font-bold tracking-tight">$99</div>
+                 <div className="text-[10px] uppercase tracking-widest opacity-80 font-bold">/month</div>
+               </div>
              </div>
              <div className="relative z-10">
                <h3 className="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight tracking-tight">PROGRESSIVE<br/>OVERLOAD</h3>
@@ -177,8 +225,16 @@ const GallerySection = () => {
   });
 
   const [activeIndex, setActiveIndex] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
   const activeAlbum = albums[activeIndex];
   
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const handleNext = () => setActiveIndex((prev) => (prev + 1) % albums.length);
   const handlePrev = () => setActiveIndex((prev) => (prev - 1 + albums.length) % albums.length);
 
@@ -198,7 +254,7 @@ const GallerySection = () => {
     <section ref={containerRef} className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col justify-center">
         
         {/* Top Nav inside section */}
-        <div className="absolute top-0 left-0 w-full p-8 flex justify-between text-[10px] md:text-xs font-mono uppercase tracking-widest text-white/50 z-50">
+        <div className="absolute top-0 left-0 w-full p-8 hidden md:flex justify-between text-[10px] md:text-xs font-mono uppercase tracking-widest text-white/50 z-50">
           <div>EVAN AUSTIN</div>
           <div className="flex gap-8">
             <span className="hover:text-white cursor-pointer transition-colors hidden sm:block">INSTAGRAM</span>
@@ -212,7 +268,7 @@ const GallerySection = () => {
            style={{ opacity: helloOpacity, y: helloY }}
            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-40"
          >
-            <h1 className="text-[60px] md:text-[120px] leading-[0.8] font-light text-white tracking-tighter text-center mix-blend-difference">
+            <h1 className="text-[50px] md:text-[120px] leading-[0.8] font-light text-white tracking-tighter text-center mix-blend-difference">
               HELLO, I'M<br/>
               <span className="italic font-serif">EVAN</span><br/>
               AUSTIN
@@ -234,7 +290,7 @@ const GallerySection = () => {
               const xTransform = useTransform(
                 scrollYProgress, 
                 [0.2, 0.6, 1.0], 
-                [`${diff * 120}%`, `${diff * 60}%`, "0%"]
+                [`${diff * (isMobile ? 70 : 120)}%`, `${diff * (isMobile ? 35 : 60)}%`, "0%"]
               );
               const rotateTransform = useTransform(
                 scrollYProgress, 
@@ -247,7 +303,7 @@ const GallerySection = () => {
                 <div
                   key={album.id}
                   onClick={() => setActiveIndex(idx)}
-                  className={`relative flex flex-col shrink-0 cursor-pointer snap-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'w-[280px] md:w-[320px] h-full' : 'w-[200px] md:w-[240px] h-[65%]'}`}
+                  className={`relative flex flex-col shrink-0 cursor-pointer snap-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'w-[240px] md:w-[320px] h-[90%] md:h-full' : 'w-[160px] md:w-[240px] h-[65%]'}`}
                   style={{ zIndex }}
                 >
                   <motion.div 
@@ -256,11 +312,11 @@ const GallerySection = () => {
                   >
                      {isActive ? (
                        <>
-                         <img src={album.images[0]} className="w-full h-1/2 object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
-                         <img src={album.images[1]} className="w-full h-1/2 object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
+                         <img src={album.images[0]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
+                         <img src={album.images[1]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
                        </>
                      ) : (
-                       <img src={album.images[0]} className="w-full h-full object-cover object-center grayscale opacity-50 hover:opacity-100 transition-all duration-700 rounded-sm shadow-xl" />
+                       <img src={album.images[0]} className="w-full h-full object-cover object-top grayscale opacity-50 hover:opacity-100 transition-all duration-700 rounded-sm shadow-xl" />
                      )}
                   </motion.div>
                   
@@ -279,8 +335,8 @@ const GallerySection = () => {
         </div>
 
         {/* Interactive Controls */}
-        <motion.div style={{ opacity: controlsOpacity }} className="absolute inset-0 pointer-events-none z-0">
-           <div className="absolute right-8 md:right-16 bottom-24 flex gap-4 z-20 pointer-events-auto">
+        <motion.div style={{ opacity: controlsOpacity }} className="absolute inset-0 pointer-events-none z-[100]">
+           <div className="absolute right-8 md:right-16 bottom-8 md:bottom-24 flex gap-4 z-20 pointer-events-auto">
              <button onClick={handlePrev} className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white transition-colors">
                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
              </button>
@@ -292,13 +348,13 @@ const GallerySection = () => {
 
         {/* Massive Bottom Typography linked perfectly to scroll! */}
         <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-[-15px] md:bottom-[-30px] left-4 md:left-12 flex items-end select-none pointer-events-none z-0">
-          <div className="text-[140px] md:text-[240px] leading-[0.8] font-light text-white tracking-tighter transition-all duration-500">
+          <div className="text-[100px] md:text-[240px] leading-[0.8] font-light text-white tracking-tighter transition-all duration-500">
             {activeAlbum.id}
           </div>
         </motion.div>
 
         <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-[-10px] md:bottom-[-20px] right-4 md:right-12 flex items-end select-none pointer-events-none z-0 overflow-hidden">
-          <div className="text-[60px] md:text-[140px] lg:text-[180px] leading-[0.8] font-light text-white tracking-tighter uppercase whitespace-nowrap transition-all duration-500">
+          <div className="text-[40px] md:text-[140px] lg:text-[180px] leading-[0.8] font-light text-white tracking-tighter uppercase whitespace-nowrap transition-all duration-500">
             {activeAlbum.title}
           </div>
         </motion.div>
@@ -354,28 +410,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white selection:bg-orange-500 selection:text-white font-sans overflow-x-hidden">
       
-      {/* GLOBAL STICKY NAVBAR */}
-      <header className={`fixed top-0 left-0 w-full z-50 px-6 lg:px-12 py-6 flex justify-between items-center transition-all duration-300 ${scrolled ? 'bg-white/10 backdrop-blur-md shadow-sm' : ''} mix-blend-difference text-white pointer-events-none`}>
-        <motion.div 
-          initial="hidden" animate="visible" variants={driftUp} transition={{ delay: 0.1 }}
-          className="flex items-center pointer-events-auto"
-        >
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 bg-orange-600 rounded-sm transform rotate-45" />
-          </div>
-        </motion.div>
-        
-        <motion.div 
-          initial="hidden" animate="visible" variants={driftUp} transition={{ delay: 0.2 }}
-          className="hidden md:flex gap-8 text-[10px] font-bold uppercase tracking-widest pointer-events-auto"
-        >
-          <span className="cursor-pointer hover:text-orange-400 transition-colors">About</span>
-          <span className="cursor-pointer hover:text-orange-400 transition-colors">Transformations</span>
-          <span className="cursor-pointer hover:text-orange-400 transition-colors">Programs</span>
-          <span className="cursor-pointer hover:text-orange-400 transition-colors">Gallery</span>
-        </motion.div>
-      </header>
-
       {/* SECTION: Personal Palace */}
       <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black py-20 lg:py-0">
         {/* Background Image */}
@@ -603,6 +637,196 @@ export default function Home() {
       {/* SECTION 4: Gallery */}
       <GallerySection />
 
+      {/* SECTION 5: Contact */}
+      <ContactSection />
+
     </main>
   );
 }
+
+const ContactSection = () => {
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 80%", "center 40%"]
+  });
+
+  const paragraphText = "Whether you are looking to build strength, drop fat, or completely overhaul your lifestyle, the first step starts here. No excuses.";
+  const paragraphWords = paragraphText.split(" ");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    goals: ""
+  });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }, 1500);
+  };
+
+  const driftUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  return (
+    <section ref={containerRef} className="relative w-full bg-[#050505] text-white flex flex-col py-32 border-t border-white/5" id="contact">
+      {/* Background elements */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-red-600/5 blur-[150px] rounded-full -translate-x-1/2 translate-y-1/2" />
+      </div>
+
+      <div className="container mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row gap-16 lg:gap-24">
+        
+        {/* Left Column: Heading & Info */}
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.3 }}
+          variants={staggerContainer}
+          className="lg:w-1/2 flex flex-col justify-center"
+        >
+          <div className="mb-4 font-mono text-sm tracking-widest uppercase">
+            <ScrollRevealWord progress={scrollYProgress} range={[0, 0.5]} colors={["#525252", "#ef4444"]}>Take</ScrollRevealWord>{" "}
+            <ScrollRevealWord progress={scrollYProgress} range={[0.5, 1.0]} colors={["#525252", "#ef4444"]}>Action</ScrollRevealWord>
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none mb-8">
+            <ScrollRevealWord progress={scrollYProgress} range={[0.0, 0.33]}>START</ScrollRevealWord>{" "}
+            <ScrollRevealWord progress={scrollYProgress} range={[0.33, 0.66]}>YOUR</ScrollRevealWord><br />
+            <ScrollRevealWord progress={scrollYProgress} range={[0.66, 1.0]}>JOURNEY</ScrollRevealWord>
+          </h1>
+          
+          <p className="text-lg md:text-xl font-light leading-relaxed max-w-md mb-12">
+            {paragraphWords.map((word, i) => {
+              const start = i / paragraphWords.length;
+              const end = start + (1 / paragraphWords.length);
+              return (
+                <span key={i}>
+                  <ScrollRevealWord progress={scrollYProgress} range={[start, end]} colors={["#525252", "rgba(255,255,255,0.6)"]}>
+                    {word}
+                  </ScrollRevealWord>
+                  {i < paragraphWords.length - 1 && " "}
+                </span>
+              );
+            })}
+          </p>
+          
+          <motion.div variants={driftUp} className="flex flex-col gap-6">
+            <div>
+              <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Email</h4>
+              <a href="mailto:contact@evanaustin.com" className="text-xl hover:text-red-500 transition-colors">contact@evanaustin.com</a>
+            </div>
+            <div>
+              <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Instagram</h4>
+              <a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="text-xl hover:text-red-500 transition-colors">@defiantly_jack3d</a>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Column: Form */}
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.3 }}
+          variants={driftUp}
+          className="lg:w-1/2 flex flex-col justify-center"
+        >
+          {isSubmitted ? (
+            <div className="bg-[#121212] border border-white/10 p-12 rounded-2xl flex flex-col items-center justify-center text-center min-h-[400px]">
+              <div className="w-16 h-16 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mb-6">
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <h3 className="text-3xl font-bold mb-4">Request Received</h3>
+              <p className="text-white/60">I'll be in touch shortly to discuss your game plan.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6 relative z-20">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="name" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Full Name</label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    required
+                    className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
+                    placeholder="Evan Austin"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Phone</label>
+                  <input 
+                    type="tel" 
+                    id="phone"
+                    required
+                    className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
+                    placeholder="(555) 000-0000"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Email Address</label>
+                <input 
+                  type="email" 
+                  id="email"
+                  required
+                  className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
+                  placeholder="contact@evanaustin.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="goals" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Your Goals</label>
+                <textarea 
+                  id="goals"
+                  required
+                  rows={4}
+                  className="bg-[#121212] border border-white/10 rounded-3xl px-6 py-5 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all resize-none"
+                  placeholder="Tell me about your current fitness level and what you want to achieve..."
+                  value={formData.goals}
+                  onChange={(e) => setFormData({...formData, goals: e.target.value})}
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className="group w-full md:w-auto self-start mt-4 bg-red-600 hover:bg-red-500 disabled:bg-red-900 text-white rounded-full px-10 py-5 flex items-center justify-center gap-4 transition-all duration-300 font-bold tracking-widest text-xs uppercase"
+              >
+                {isSubmitting ? 'SENDING...' : 'APPLY FOR COACHING'}
+                {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+              </button>
+            </form>
+          )}
+        </motion.div>
+
+      </div>
+    </section>
+  );
+};
