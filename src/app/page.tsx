@@ -4,9 +4,9 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from "fra
 import { Search, Maximize, ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
-const ScrollRevealWord = ({ children, progress, range, colors = ["#525252", "#ffffff"] }: { children: React.ReactNode, progress: any, range: [number, number], colors?: string[] }) => {
+const ScrollRevealWord = ({ children, progress, range, colors = ["#525252", "#ffffff"], className }: { children: React.ReactNode, progress: any, range: [number, number], colors?: string[], className?: string }) => {
   const color = useTransform(progress, range, colors);
-  return <motion.span style={{ color }}>{children}</motion.span>;
+  return <motion.span style={{ color }} className={className}>{children}</motion.span>;
 };
 
 const JourneySection = () => {
@@ -24,19 +24,19 @@ const JourneySection = () => {
 
   const baseVariants = {
     left: { 
-      x: isMobile ? "-20%" : "-110%", 
-      y: isMobile ? "8%" : "8%", 
-      rotateY: isMobile ? 175 : 165, 
-      rotateZ: isMobile ? -8 : -6, 
-      scale: 1,
+      x: isMobile ? "0%" : "-110%", 
+      y: isMobile ? "30%" : "8%", 
+      rotateY: isMobile ? 180 : 165, 
+      rotateZ: isMobile ? 0 : -6, 
+      scale: isMobile ? 0.9 : 1,
       transition: cardTransition 
     },
     right: { 
-      x: isMobile ? "20%" : "110%", 
-      y: isMobile ? "12%" : "8%", 
-      rotateY: isMobile ? 185 : 195, 
-      rotateZ: isMobile ? 8 : 6, 
-      scale: 1,
+      x: isMobile ? "0%" : "110%", 
+      y: isMobile ? "15%" : "8%", 
+      rotateY: isMobile ? 180 : 195, 
+      rotateZ: isMobile ? 0 : 6, 
+      scale: isMobile ? 0.95 : 1,
       transition: cardTransition 
     },
     middle: { 
@@ -49,14 +49,27 @@ const JourneySection = () => {
     }
   };
 
-  const getCardVariants = (index: number) => {
+  const getCardStyle = (index: number) => {
     let visibleVariant = baseVariants.right;
-    if (index === activeCard) visibleVariant = baseVariants.middle;
-    else if (index === (activeCard - 1 + 3) % 3) visibleVariant = baseVariants.left;
+    let zIndex = 10;
+    
+    if (index === activeCard) {
+      visibleVariant = baseVariants.middle;
+      zIndex = 30;
+    } else if (index === (activeCard + 1) % 3) {
+      visibleVariant = baseVariants.right; // Next card
+      zIndex = 20;
+    } else {
+      visibleVariant = baseVariants.left; // Prev card
+      zIndex = 10;
+    }
     
     return {
-      hidden: { x: "0%", y: "0%", rotateY: 0, rotateZ: 0, scale: 1 },
-      visible: visibleVariant
+      variants: {
+        hidden: { x: "0%", y: "0%", rotateY: 0, rotateZ: 0, scale: 1 },
+        visible: visibleVariant
+      },
+      zIndex
     };
   };
 
@@ -85,9 +98,9 @@ const JourneySection = () => {
         
         {/* Left Card: BUILD YOUR FOUNDATION (Index 0) */}
         <motion.div 
-          variants={getCardVariants(0)}
+          variants={getCardStyle(0).variants}
           onClick={() => setActiveCard(0)}
-          style={{ transformStyle: "preserve-3d", zIndex: activeCard === 0 ? 20 : 10 }}
+          style={{ transformStyle: "preserve-3d", zIndex: getCardStyle(0).zIndex }}
           className="absolute inset-0 origin-bottom cursor-pointer group"
         >
           {/* Front Face (Red Cover) */}
@@ -111,9 +124,9 @@ const JourneySection = () => {
 
         {/* Right Card: BREAK YOUR PLATEAU (Index 2) */}
         <motion.div 
-          variants={getCardVariants(2)}
+          variants={getCardStyle(2).variants}
           onClick={() => setActiveCard(2)}
-          style={{ transformStyle: "preserve-3d", zIndex: activeCard === 2 ? 20 : 10 }}
+          style={{ transformStyle: "preserve-3d", zIndex: getCardStyle(2).zIndex }}
           className="absolute inset-0 origin-bottom cursor-pointer group"
         >
           {/* Front Face (Red Cover) */}
@@ -137,9 +150,9 @@ const JourneySection = () => {
 
         {/* Middle Card: PROGRESSIVE OVERLOAD (Index 1) */}
         <motion.div 
-          variants={getCardVariants(1)}
+          variants={getCardStyle(1).variants}
           onClick={() => setActiveCard(1)}
-          style={{ transformStyle: "preserve-3d", zIndex: activeCard === 1 ? 20 : 10 }}
+          style={{ transformStyle: "preserve-3d", zIndex: getCardStyle(1).zIndex }}
           className="absolute inset-0 origin-bottom cursor-pointer group"
         >
           {/* Front Face (Red Cover) */}
@@ -347,14 +360,14 @@ const GallerySection = () => {
         </motion.div>
 
         {/* Massive Bottom Typography linked perfectly to scroll! */}
-        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-[-15px] md:bottom-[-30px] left-4 md:left-12 flex items-end select-none pointer-events-none z-0">
-          <div className="text-[100px] md:text-[240px] leading-[0.8] font-light text-white tracking-tighter transition-all duration-500">
+        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 left-4 md:left-12 flex items-end select-none pointer-events-none z-0">
+          <div className="text-[100px] md:text-[240px] leading-none font-light text-white tracking-tighter transition-all duration-500">
             {activeAlbum.id}
           </div>
         </motion.div>
 
-        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-[-10px] md:bottom-[-20px] right-4 md:right-12 flex items-end select-none pointer-events-none z-0 overflow-hidden">
-          <div className="text-[40px] md:text-[140px] lg:text-[180px] leading-[0.8] font-light text-white tracking-tighter uppercase whitespace-nowrap transition-all duration-500">
+        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 right-4 md:right-12 flex items-end select-none pointer-events-none z-0">
+          <div className="text-[40px] md:text-[140px] lg:text-[180px] leading-none font-light text-white tracking-tighter uppercase whitespace-nowrap transition-all duration-500">
             {activeAlbum.title}
           </div>
         </motion.div>
@@ -648,13 +661,17 @@ const ContactSection = () => {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 80%", "center 40%"]
+    offset: ["start 85%", "start 25%"]
   });
 
   const paragraphText = "Whether you are looking to build strength, drop fat, or completely overhaul your lifestyle, the first step starts here. No excuses.";
   const paragraphWords = paragraphText.split(" ");
 
+  const emailStr = "contact@evanaustin.com";
+  const instaStr = "@defiantly_jack3d";
+
   const placeholderColor = useTransform(scrollYProgress, [0.2, 0.8], ["rgba(255,255,255,0.0)", "rgba(255,255,255,0.4)"]);
+  const inputWidth = useTransform(scrollYProgress, [0.0, 0.8], ["0%", "100%"]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -736,11 +753,23 @@ const ContactSection = () => {
           <motion.div variants={driftUp} className="flex flex-col gap-6">
             <div>
               <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Email</h4>
-              <a href="mailto:contact@evanaustin.com" className="text-xl hover:text-red-500 transition-colors">contact@evanaustin.com</a>
+              <a href="mailto:contact@evanaustin.com" className="group text-xl transition-colors">
+                {emailStr.split("").map((char, i) => (
+                  <ScrollRevealWord key={i} progress={scrollYProgress} range={[i/emailStr.length, (i+1)/emailStr.length]} className="group-hover:!text-red-500 transition-colors duration-300">
+                    {char}
+                  </ScrollRevealWord>
+                ))}
+              </a>
             </div>
             <div>
               <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Instagram</h4>
-              <a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="text-xl hover:text-red-500 transition-colors">@defiantly_jack3d</a>
+              <a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="group text-xl transition-colors">
+                {instaStr.split("").map((char, i) => (
+                  <ScrollRevealWord key={i} progress={scrollYProgress} range={[i/instaStr.length, (i+1)/instaStr.length]} className="group-hover:!text-red-500 transition-colors duration-300">
+                    {char}
+                  </ScrollRevealWord>
+                ))}
+              </a>
             </div>
           </motion.div>
         </motion.div>
@@ -770,7 +799,7 @@ const ContactSection = () => {
                     type="text" 
                     id="name"
                     required
-                    style={{ "--placeholder-color": placeholderColor } as any}
+                    style={{ "--placeholder-color": placeholderColor, width: inputWidth } as any}
                     className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
                     placeholder="Evan Austin"
                     value={formData.name}
@@ -783,7 +812,7 @@ const ContactSection = () => {
                     type="tel" 
                     id="phone"
                     required
-                    style={{ "--placeholder-color": placeholderColor } as any}
+                    style={{ "--placeholder-color": placeholderColor, width: inputWidth } as any}
                     className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
                     placeholder="(555) 000-0000"
                     value={formData.phone}
@@ -798,7 +827,7 @@ const ContactSection = () => {
                   type="email" 
                   id="email"
                   required
-                  style={{ "--placeholder-color": placeholderColor } as any}
+                  style={{ "--placeholder-color": placeholderColor, width: inputWidth } as any}
                   className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
                   placeholder="contact@evanaustin.com"
                   value={formData.email}
@@ -812,7 +841,7 @@ const ContactSection = () => {
                   id="goals"
                   required
                   rows={4}
-                  style={{ "--placeholder-color": placeholderColor } as any}
+                  style={{ "--placeholder-color": placeholderColor, width: inputWidth } as any}
                   className="bg-[#121212] border border-white/10 rounded-3xl px-6 py-5 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all resize-none placeholder-[color:var(--placeholder-color)]"
                   placeholder="Tell me about your current fitness level and what you want to achieve..."
                   value={formData.goals}
