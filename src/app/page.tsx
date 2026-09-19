@@ -20,7 +20,7 @@ const JourneySection = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const cardTransition = { duration: 1.0, ease: [0.22, 1, 0.36, 1] }; // faster transition for clicks
+  const cardTransition = { duration: 1.0, ease: [0.22, 1, 0.36, 1] as const }; // faster transition for clicks
 
   const baseVariants = {
     left: { 
@@ -92,7 +92,7 @@ const JourneySection = () => {
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.5 }}
-        transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] as const }}
         className="text-3xl md:text-5xl lg:text-7xl text-white font-serif tracking-tight mb-12 md:mb-16 z-10 px-4 text-center"
       >
         Where are you <span className="italic text-neutral-400 font-light">in</span> your fitness journey?
@@ -410,7 +410,7 @@ export default function Home() {
 
   // Animation variants: smooth, ease-out, subtle upward/sideways drift (30px/20px), duration 0.7s
   const duration = 0.7;
-  const ease = [0.21, 0.47, 0.32, 0.98]; // Smooth ease-out curve
+  const ease = [0.21, 0.47, 0.32, 0.98] as const; // Smooth ease-out curve
 
   const driftFromLeft = {
     hidden: { opacity: 0, x: -30, y: 20 },
@@ -429,7 +429,7 @@ export default function Home() {
 
   const scaleUpFromBottom = {
     hidden: { opacity: 0, y: 100, scale: 0.6 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.4, ease: [0.22, 1, 0.36, 1] } } // Slow, premium ease-out
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.4, ease: [0.22, 1, 0.36, 1] as const } } // Slow, premium ease-out
   };
 
   const headingRef = useRef<HTMLDivElement>(null);
@@ -716,7 +716,7 @@ const ContactSection = () => {
 
   const driftUp = {
     hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }
   };
 
   const staggerContainer = {
