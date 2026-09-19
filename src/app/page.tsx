@@ -654,6 +654,8 @@ const ContactSection = () => {
   const paragraphText = "Whether you are looking to build strength, drop fat, or completely overhaul your lifestyle, the first step starts here. No excuses.";
   const paragraphWords = paragraphText.split(" ");
 
+  const placeholderColor = useTransform(scrollYProgress, [0.2, 0.8], ["rgba(255,255,255,0.0)", "rgba(255,255,255,0.4)"]);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -764,11 +766,12 @@ const ContactSection = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="name" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Full Name</label>
-                  <input 
+                  <motion.input 
                     type="text" 
                     id="name"
                     required
-                    className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
+                    style={{ "--placeholder-color": placeholderColor } as any}
+                    className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
                     placeholder="Evan Austin"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -776,11 +779,12 @@ const ContactSection = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Phone</label>
-                  <input 
+                  <motion.input 
                     type="tel" 
                     id="phone"
                     required
-                    className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
+                    style={{ "--placeholder-color": placeholderColor } as any}
+                    className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
                     placeholder="(555) 000-0000"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -790,11 +794,12 @@ const ContactSection = () => {
               
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Email Address</label>
-                <input 
+                <motion.input 
                   type="email" 
                   id="email"
                   required
-                  className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
+                  style={{ "--placeholder-color": placeholderColor } as any}
+                  className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
                   placeholder="contact@evanaustin.com"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -803,11 +808,12 @@ const ContactSection = () => {
 
               <div className="flex flex-col gap-2">
                 <label htmlFor="goals" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Your Goals</label>
-                <textarea 
+                <motion.textarea 
                   id="goals"
                   required
                   rows={4}
-                  className="bg-[#121212] border border-white/10 rounded-3xl px-6 py-5 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all resize-none"
+                  style={{ "--placeholder-color": placeholderColor } as any}
+                  className="bg-[#121212] border border-white/10 rounded-3xl px-6 py-5 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all resize-none placeholder-[color:var(--placeholder-color)]"
                   placeholder="Tell me about your current fitness level and what you want to achieve..."
                   value={formData.goals}
                   onChange={(e) => setFormData({...formData, goals: e.target.value})}
