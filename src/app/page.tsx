@@ -305,7 +305,7 @@ const GallerySection = () => {
            style={{ opacity: helloOpacity, y: helloY }}
            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-40"
          >
-            <h1 className="text-[50px] md:text-[120px] leading-[0.8] font-light text-white tracking-tighter text-center mix-blend-difference">
+            <h1 className="text-[50px] md:text-[120px] leading-[0.8] font-light text-white tracking-tighter text-center mix-blend-normal md:mix-blend-difference will-change-transform">
               HELLO, I'M<br/>
               <span className="italic font-serif">EVAN</span><br/>
               AUSTIN
@@ -345,13 +345,17 @@ const GallerySection = () => {
                 >
                   <motion.div 
                     style={{ x: xTransform, rotateZ: rotateTransform }}
-                    className="w-full h-full relative flex flex-col gap-4"
+                    className="w-full h-full relative flex flex-col gap-4 will-change-transform"
                   >
                      {isActive ? (
-                       <>
-                         <img src={album.images[0]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
-                         <img src={album.images[1]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
-                       </>
+                       isMobile ? (
+                         <img src={album.images[0]} className="w-full h-full object-cover object-top grayscale transition-all duration-700 rounded-sm shadow-2xl" />
+                       ) : (
+                         <>
+                           <img src={album.images[0]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
+                           <img src={album.images[1]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
+                         </>
+                       )
                      ) : (
                        <img src={album.images[0]} className="w-full h-full object-cover object-top grayscale opacity-50 hover:opacity-100 transition-all duration-700 rounded-sm shadow-xl" />
                      )}
@@ -384,7 +388,7 @@ const GallerySection = () => {
         </motion.div>
 
         {/* Massive Bottom Typography linked perfectly to scroll! */}
-        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 left-0 w-full px-4 md:px-12 flex justify-between items-baseline select-none pointer-events-none z-0">
+        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 left-0 w-full px-4 md:px-12 flex justify-between items-baseline select-none pointer-events-none z-0 will-change-transform">
           <div className="text-[100px] md:text-[240px] leading-none font-light text-white tracking-tighter transition-all duration-500">
             {activeAlbum.id}
           </div>
