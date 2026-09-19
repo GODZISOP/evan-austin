@@ -24,19 +24,19 @@ const JourneySection = () => {
 
   const baseVariants = {
     left: { 
-      x: isMobile ? "0%" : "-110%", 
-      y: isMobile ? "30%" : "8%", 
-      rotateY: isMobile ? 180 : 165, 
-      rotateZ: isMobile ? 0 : -6, 
-      scale: isMobile ? 0.9 : 1,
+      x: isMobile ? "-30%" : "-110%", 
+      y: isMobile ? "8%" : "8%", 
+      rotateY: isMobile ? 175 : 165, 
+      rotateZ: isMobile ? -8 : -6, 
+      scale: 1,
       transition: cardTransition 
     },
     right: { 
-      x: isMobile ? "0%" : "110%", 
-      y: isMobile ? "15%" : "8%", 
-      rotateY: isMobile ? 180 : 195, 
-      rotateZ: isMobile ? 0 : 6, 
-      scale: isMobile ? 0.95 : 1,
+      x: isMobile ? "30%" : "110%", 
+      y: isMobile ? "12%" : "8%", 
+      rotateY: isMobile ? 185 : 195, 
+      rotateZ: isMobile ? 8 : 6, 
+      scale: 1,
       transition: cardTransition 
     },
     middle: { 
@@ -73,6 +73,16 @@ const JourneySection = () => {
     };
   };
 
+  const handlePrev = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setActiveCard((activeCard - 1 + 3) % 3);
+  };
+
+  const handleNext = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setActiveCard((activeCard + 1) % 3);
+  };
+
   return (
     <section className="relative min-h-screen w-full bg-[#050505] overflow-hidden flex flex-col items-center justify-center py-24 lg:py-32">
       {/* Ambient Glow */}
@@ -99,7 +109,7 @@ const JourneySection = () => {
         {/* Left Card: BUILD YOUR FOUNDATION (Index 0) */}
         <motion.div 
           variants={getCardStyle(0).variants}
-          onClick={() => setActiveCard(0)}
+          onClick={(e) => activeCard === 0 ? handleNext(e) : setActiveCard(0)}
           style={{ transformStyle: "preserve-3d", zIndex: getCardStyle(0).zIndex }}
           className="absolute inset-0 origin-bottom cursor-pointer group"
         >
@@ -125,7 +135,7 @@ const JourneySection = () => {
         {/* Right Card: BREAK YOUR PLATEAU (Index 2) */}
         <motion.div 
           variants={getCardStyle(2).variants}
-          onClick={() => setActiveCard(2)}
+          onClick={(e) => activeCard === 2 ? handleNext(e) : setActiveCard(2)}
           style={{ transformStyle: "preserve-3d", zIndex: getCardStyle(2).zIndex }}
           className="absolute inset-0 origin-bottom cursor-pointer group"
         >
@@ -151,7 +161,7 @@ const JourneySection = () => {
         {/* Middle Card: PROGRESSIVE OVERLOAD (Index 1) */}
         <motion.div 
           variants={getCardStyle(1).variants}
-          onClick={() => setActiveCard(1)}
+          onClick={(e) => activeCard === 1 ? handleNext(e) : setActiveCard(1)}
           style={{ transformStyle: "preserve-3d", zIndex: getCardStyle(1).zIndex }}
           className="absolute inset-0 origin-bottom cursor-pointer group"
         >
@@ -173,6 +183,20 @@ const JourneySection = () => {
              </div>
           </div>
         </motion.div>
+
+        {/* Invisible Tap Zones for Mobile */}
+        {isMobile && (
+          <>
+            <div 
+              className="absolute top-0 bottom-0 left-[-40%] w-[50%] z-[100]" 
+              onClick={handlePrev}
+            />
+            <div 
+              className="absolute top-0 bottom-0 right-[-40%] w-[50%] z-[100]" 
+              onClick={handleNext}
+            />
+          </>
+        )}
 
       </motion.div>
     </section>
@@ -349,24 +373,21 @@ const GallerySection = () => {
 
         {/* Interactive Controls */}
         <motion.div style={{ opacity: controlsOpacity }} className="absolute inset-0 pointer-events-none z-[100]">
-           <div className="absolute right-8 md:right-16 bottom-8 md:bottom-24 flex gap-4 z-20 pointer-events-auto">
-             <button onClick={handlePrev} className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white transition-colors">
-               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+           <div className="absolute left-1/2 -translate-x-1/2 bottom-[120px] md:bottom-12 flex gap-4 z-20 pointer-events-auto">
+             <button onClick={handlePrev} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white transition-colors">
+               <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
              </button>
-             <button onClick={handleNext} className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white transition-colors">
-               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+             <button onClick={handleNext} className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white transition-colors">
+               <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
              </button>
            </div>
         </motion.div>
 
         {/* Massive Bottom Typography linked perfectly to scroll! */}
-        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 left-4 md:left-12 flex items-end select-none pointer-events-none z-0">
+        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 left-0 w-full px-4 md:px-12 flex justify-between items-baseline select-none pointer-events-none z-0">
           <div className="text-[100px] md:text-[240px] leading-none font-light text-white tracking-tighter transition-all duration-500">
             {activeAlbum.id}
           </div>
-        </motion.div>
-
-        <motion.div style={{ y: bottomTextY, opacity: bottomTextOpacity }} className="absolute bottom-4 md:bottom-8 right-4 md:right-12 flex items-end select-none pointer-events-none z-0">
           <div className="text-[40px] md:text-[140px] lg:text-[180px] leading-none font-light text-white tracking-tighter uppercase whitespace-nowrap transition-all duration-500">
             {activeAlbum.title}
           </div>
@@ -661,7 +682,7 @@ const ContactSection = () => {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 85%", "start 25%"]
+    offset: ["start 85%", "center 40%"]
   });
 
   const paragraphText = "Whether you are looking to build strength, drop fat, or completely overhaul your lifestyle, the first step starts here. No excuses.";
@@ -725,23 +746,23 @@ const ContactSection = () => {
           className="lg:w-1/2 flex flex-col justify-center"
         >
           <div className="mb-4 font-mono text-sm tracking-widest uppercase">
-            <ScrollRevealWord progress={scrollYProgress} range={[0, 0.5]} colors={["#525252", "#ef4444"]}>Take</ScrollRevealWord>{" "}
-            <ScrollRevealWord progress={scrollYProgress} range={[0.5, 1.0]} colors={["#525252", "#ef4444"]}>Action</ScrollRevealWord>
+            <ScrollRevealWord progress={scrollYProgress} range={[0.0, 0.05]} colors={["#525252", "#ef4444"]}>Take</ScrollRevealWord>{" "}
+            <ScrollRevealWord progress={scrollYProgress} range={[0.05, 0.1]} colors={["#525252", "#ef4444"]}>Action</ScrollRevealWord>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-none mb-8">
-            <ScrollRevealWord progress={scrollYProgress} range={[0.0, 0.33]}>START</ScrollRevealWord>{" "}
-            <ScrollRevealWord progress={scrollYProgress} range={[0.33, 0.66]}>YOUR</ScrollRevealWord><br />
-            <ScrollRevealWord progress={scrollYProgress} range={[0.66, 1.0]}>JOURNEY</ScrollRevealWord>
+            <ScrollRevealWord progress={scrollYProgress} range={[0.1, 0.2]}>START</ScrollRevealWord>{" "}
+            <ScrollRevealWord progress={scrollYProgress} range={[0.2, 0.3]}>YOUR</ScrollRevealWord><br />
+            <ScrollRevealWord progress={scrollYProgress} range={[0.3, 0.4]}>JOURNEY</ScrollRevealWord>
           </h1>
           
           <p className="text-lg md:text-xl font-light leading-relaxed max-w-md mb-12">
             {paragraphWords.map((word, i) => {
-              const start = i / paragraphWords.length;
-              const end = start + (1 / paragraphWords.length);
+              const start = 0.4 + (i / paragraphWords.length) * 0.4;
+              const end = 0.4 + ((i + 1) / paragraphWords.length) * 0.4;
               return (
                 <span key={i}>
-                  <ScrollRevealWord progress={scrollYProgress} range={[start, end]} colors={["#525252", "rgba(255,255,255,0.6)"]}>
+                  <ScrollRevealWord progress={scrollYProgress} range={[start, end]} colors={["#525252", "#a3a3a3"]}>
                     {word}
                   </ScrollRevealWord>
                   {i < paragraphWords.length - 1 && " "}
@@ -755,7 +776,7 @@ const ContactSection = () => {
               <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Email</h4>
               <a href="mailto:contact@evanaustin.com" className="group text-xl transition-colors">
                 {emailStr.split("").map((char, i) => (
-                  <ScrollRevealWord key={i} progress={scrollYProgress} range={[i/emailStr.length, (i+1)/emailStr.length]} className="group-hover:!text-red-500 transition-colors duration-300">
+                  <ScrollRevealWord key={i} progress={scrollYProgress} range={[0.8 + (i/emailStr.length)*0.1, 0.8 + ((i+1)/emailStr.length)*0.1]} className="group-hover:!text-red-500 transition-colors duration-300">
                     {char}
                   </ScrollRevealWord>
                 ))}
@@ -765,7 +786,7 @@ const ContactSection = () => {
               <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Instagram</h4>
               <a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="group text-xl transition-colors">
                 {instaStr.split("").map((char, i) => (
-                  <ScrollRevealWord key={i} progress={scrollYProgress} range={[i/instaStr.length, (i+1)/instaStr.length]} className="group-hover:!text-red-500 transition-colors duration-300">
+                  <ScrollRevealWord key={i} progress={scrollYProgress} range={[0.9 + (i/instaStr.length)*0.1, 0.9 + ((i+1)/instaStr.length)*0.1]} className="group-hover:!text-red-500 transition-colors duration-300">
                     {char}
                   </ScrollRevealWord>
                 ))}
