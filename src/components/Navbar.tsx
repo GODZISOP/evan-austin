@@ -13,6 +13,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [programsDropdownOpen, setProgramsDropdownOpen] = useState(false);
   const [activeDay, setActiveDay] = useState<"leg-day" | "arm-day">("leg-day");
+  const [mobileWorkoutsOpen, setMobileWorkoutsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -20,6 +21,7 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
     setProgramsDropdownOpen(false);
+    setMobileWorkoutsOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -39,6 +41,7 @@ export default function Navbar() {
       if (e.key === "Escape") {
         setProgramsDropdownOpen(false);
         setMobileMenuOpen(false);
+        setMobileWorkoutsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClick);
@@ -90,7 +93,7 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <motion.div
           initial="hidden" animate="visible" variants={driftUp} transition={{ delay: 0.2 }}
-          className="hidden md:flex gap-8 items-center text-[10px] font-bold uppercase tracking-widest pointer-events-auto"
+          className="hidden md:flex gap-8 items-center text-xs font-bold uppercase tracking-widest pointer-events-auto"
         >
           <Link href="/#about">
             <span className="cursor-pointer hover:text-red-500 transition-colors">About</span>
@@ -102,7 +105,7 @@ export default function Navbar() {
             <span className="cursor-pointer hover:text-red-500 transition-colors">Transformations</span>
           </Link>
 
-          {/* Programs with Mega Dropdown */}
+          {/* Workouts with Mega Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
               onMouseEnter={() => setProgramsDropdownOpen(true)}
@@ -111,12 +114,12 @@ export default function Navbar() {
                 programsDropdownOpen ? "text-red-500" : "hover:text-red-500"
               }`}
             >
-              Programs
+              Workouts
               <motion.span
                 animate={{ rotate: programsDropdownOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ChevronDown className="w-3 h-3" />
+                <ChevronDown className="w-3.5 h-3.5" />
               </motion.span>
             </button>
 
@@ -284,96 +287,172 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col px-8 pb-12 gap-0">
-              {/* Regular links */}
-              {[
-                { label: "About", href: "/#about" },
-                { label: "Services", href: "/services" },
-                { label: "Transformations", href: "/#transformations" },
-                { label: "Gallery", href: "/#gallery" },
-                { label: "Contact", href: "/contact" },
-              ].map((link, i) => (
-                <motion.div
-                  key={link.label}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.07 }}
-                  className="border-b border-white/8"
-                >
-                  <Link href={link.href} onClick={() => setMobileMenuOpen(false)}>
-                    <span className="block py-5 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors">
-                      {link.label}
-                    </span>
-                  </Link>
-                </motion.div>
-              ))}
+              {/* About */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                className="border-b border-white/8"
+              >
+                <Link href="/#about" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="block py-4 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors">
+                    About
+                  </span>
+                </Link>
+              </motion.div>
 
-              {/* Programs: mobile expanded list */}
+              {/* Services */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.15 }}
+                className="border-b border-white/8"
+              >
+                <Link href="/services" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="block py-4 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors">
+                    Services
+                  </span>
+                </Link>
+              </motion.div>
+
+              {/* Transformations */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="border-b border-white/8"
+              >
+                <Link href="/#transformations" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="block py-4 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors">
+                    Transformations
+                  </span>
+                </Link>
+              </motion.div>
+
+              {/* Workouts: Collapsible Mobile Dropdown (Closed by default) */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 }}
+                className="border-b border-white/8"
+              >
+                <button
+                  type="button"
+                  onClick={() => setMobileWorkoutsOpen(!mobileWorkoutsOpen)}
+                  className="w-full flex items-center justify-between py-4 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors text-left"
+                >
+                  <span className={mobileWorkoutsOpen ? "text-red-500" : ""}>Workouts</span>
+                  <motion.div
+                    animate={{ rotate: mobileWorkoutsOpen ? 180 : 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="p-1.5 rounded-full bg-white/5 border border-white/10"
+                  >
+                    <ChevronDown className="w-5 h-5 text-neutral-300" />
+                  </motion.div>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {mobileWorkoutsOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden pb-4"
+                    >
+                      <div className="pt-2 pb-3 flex items-center justify-between">
+                        <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400 font-bold">
+                          Training Splits
+                        </span>
+                        <Link href="/programs" onClick={() => setMobileMenuOpen(false)}>
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-red-500 flex items-center gap-1 font-bold">
+                            View All <ArrowRight className="w-3.5 h-3.5" />
+                          </span>
+                        </Link>
+                      </div>
+
+                      {/* Day Tabs Mobile */}
+                      <div className="flex gap-2 mb-3">
+                        {[legDay, armDay].map((day) => (
+                          <button
+                            key={day.id}
+                            type="button"
+                            onClick={() => setActiveDay(day.id)}
+                            className={`flex-1 py-2 px-3 rounded-lg text-[10px] font-mono uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 ${
+                              activeDay === day.id
+                                ? "bg-red-600 text-white"
+                                : "bg-white/5 text-neutral-400 hover:text-white"
+                            }`}
+                          >
+                            {dayIcons[day.id as "leg-day" | "arm-day"]}
+                            <span>{day.name}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Exercises mobile list */}
+                      <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-1">
+                        {currentDayData.exercises.map((exercise) => (
+                          <Link
+                            key={exercise.id}
+                            href={`/workouts/${exercise.slug}`}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center gap-3 p-2.5 rounded-xl bg-white/4 border border-white/8 hover:border-red-500/30 transition-colors"
+                          >
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-900 shrink-0 relative">
+                              {exercise.demoImage ? (
+                                <Image
+                                  src={exercise.demoImage}
+                                  alt={exercise.title}
+                                  fill
+                                  className="object-cover"
+                                  sizes="48px"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Dumbbell className="w-4 h-4 text-neutral-600" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-bold text-white truncate">{exercise.title}</div>
+                              <div className="text-[10px] text-neutral-400 truncate">{exercise.primaryMuscles[0]}</div>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-neutral-500 shrink-0" />
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              {/* Gallery */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="border-b border-white/8"
+              >
+                <Link href="/#gallery" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="block py-4 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors">
+                    Gallery
+                  </span>
+                </Link>
+              </motion.div>
+
+              {/* Contact */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.35 }}
                 className="border-b border-white/8"
               >
-                <div className="py-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold uppercase tracking-widest text-red-500">Programs</span>
-                    <Link href="/programs" onClick={() => setMobileMenuOpen(false)}>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-1">
-                        View All <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </Link>
-                  </div>
-
-                  {/* Day Tabs Mobile */}
-                  <div className="flex gap-2 mb-4">
-                    {[legDay, armDay].map((day) => (
-                      <button
-                        key={day.id}
-                        onClick={() => setActiveDay(day.id)}
-                        className={`flex-1 py-2 rounded-lg text-[10px] font-mono uppercase tracking-wider font-bold transition-all ${
-                          activeDay === day.id
-                            ? "bg-red-600 text-white"
-                            : "bg-white/5 text-neutral-400"
-                        }`}
-                      >
-                        {day.name}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Exercises mobile list */}
-                  <div className="grid grid-cols-1 gap-2">
-                    {currentDayData.exercises.map((exercise) => (
-                      <Link
-                        key={exercise.id}
-                        href={`/workouts/${exercise.slug}`}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white/4 border border-white/8 hover:border-red-500/30 transition-colors"
-                      >
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-900 shrink-0 relative">
-                          {exercise.demoImage ? (
-                            <Image
-                              src={exercise.demoImage}
-                              alt={exercise.title}
-                              fill
-                              className="object-cover"
-                              sizes="48px"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Dumbbell className="w-4 h-4 text-neutral-600" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-bold text-white truncate">{exercise.title}</div>
-                          <div className="text-[10px] text-neutral-500 truncate">{exercise.primaryMuscles[0]}</div>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-neutral-600 shrink-0" />
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
+                  <span className="block py-4 text-2xl font-bold uppercase tracking-widest text-white hover:text-red-500 transition-colors">
+                    Contact
+                  </span>
+                </Link>
               </motion.div>
             </div>
           </motion.div>
