@@ -1,8 +1,10 @@
 "use client";
 
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
-import { Search, Maximize, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+
 
 const ScrollRevealWord = ({ children, progress, range, colors = ["#525252", "#ffffff"], className }: { children: React.ReactNode, progress: any, range: [number, number], colors?: string[], className?: string }) => {
   const color = useTransform(progress, range, colors);
@@ -84,7 +86,7 @@ const JourneySection = () => {
   };
 
   return (
-    <section className="relative min-h-screen w-full bg-[#050505] overflow-hidden flex flex-col items-center justify-center py-24 lg:py-32">
+    <section id="transformations" className="relative min-h-screen w-full bg-[#050505] overflow-hidden flex flex-col items-center justify-center py-24 lg:py-32">
       {/* Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] lg:w-[1200px] h-[800px] lg:h-[1200px] bg-red-600/10 blur-[120px] rounded-full pointer-events-none z-0" />
 
@@ -288,15 +290,15 @@ const GallerySection = () => {
 
   return (
     // Strictly h-screen. Absolutely no sticky wrapper, meaning ZERO empty space.
-    <section ref={containerRef} className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col justify-center">
+    <section id="gallery" ref={containerRef} className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col justify-center">
         
         {/* Top Nav inside section */}
-        <div className="absolute top-0 left-0 w-full p-8 hidden md:flex justify-between text-[10px] md:text-xs font-mono uppercase tracking-widest text-white/50 z-50">
+        <div className="absolute top-0 left-0 w-full p-8 hidden md:flex justify-between text-[10px] md:text-xs font-mono uppercase tracking-widest text-neutral-400 z-50">
           <div>EVAN AUSTIN</div>
           <div className="flex gap-8">
-            <span className="hover:text-white cursor-pointer transition-colors hidden sm:block">INSTAGRAM</span>
-            <span className="text-white">GALLERY</span>
-            <span className="hover:text-white cursor-pointer transition-colors hidden sm:block">CONTACT</span>
+            <a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="hover:text-white transition-colors hidden sm:block">INSTAGRAM</a>
+            <a href="/#gallery" className="text-white hover:text-red-500 transition-colors">GALLERY</a>
+            <Link href="/contact" className="hover:text-white transition-colors hidden sm:block">CONTACT</Link>
           </div>
         </div>
 
@@ -497,48 +499,38 @@ export default function Home() {
             </motion.p>
           </div>
 
-          {/* Left Floating Actions (Left Side) */}
+          {/* Left Floating Action Links */}
           <div className="flex flex-row lg:flex-col gap-4 lg:absolute lg:left-16 lg:top-1/2 lg:-translate-y-1/2 flex-wrap justify-center">
-             <motion.button 
-               variants={driftFromLeft} transition={{ delay: 0.1 }}
-               className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white text-black flex items-center justify-center font-bold shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform text-xs md:text-sm"
-             >
-               Train
-             </motion.button>
-             <motion.button 
-               variants={driftFromLeft} transition={{ delay: 0.2 }}
-               className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center justify-center font-medium hover:bg-white/20 transition-colors text-xs md:text-sm"
-             >
-               Recover
-             </motion.button>
-             <motion.button 
-               variants={driftFromLeft} transition={{ delay: 0.3 }}
-               className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center justify-center font-medium hover:bg-white/20 transition-colors text-xs md:text-sm"
-             >
-               Grow
-             </motion.button>
-             
-             {/* Bottom left tools */}
-             <div className="hidden md:flex flex-row lg:flex-col gap-4 lg:absolute lg:top-[280px] lg:left-0 mt-4 lg:mt-0">
-               <motion.button 
-                 variants={driftFromLeft} transition={{ delay: 0.4 }}
-                 className="w-16 h-16 rounded-[2rem] bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition-colors border border-white/10 shadow-lg"
+             <motion.div variants={driftFromLeft} transition={{ delay: 0.1 }}>
+               <Link
+                 href="/programs"
+                 className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white text-black flex items-center justify-center font-bold shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 hover:bg-neutral-200 transition-all text-xs md:text-sm"
                >
-                 <Maximize className="w-6 h-6 text-white" />
-               </motion.button>
-               <motion.button 
-                 variants={driftFromLeft} transition={{ delay: 0.5 }}
-                 className="w-16 h-16 rounded-[2rem] bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition-colors border border-white/10 shadow-lg"
+                 Train
+               </Link>
+             </motion.div>
+             <motion.div variants={driftFromLeft} transition={{ delay: 0.2 }}>
+               <Link
+                 href="/#about"
+                 className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center justify-center font-medium hover:bg-white/20 hover:border-red-500/40 transition-colors text-xs md:text-sm"
                >
-                 <Search className="w-6 h-6 text-white" />
-               </motion.button>
-             </div>
+                 About
+               </Link>
+             </motion.div>
+             <motion.div variants={driftFromLeft} transition={{ delay: 0.3 }}>
+               <Link
+                 href="/contact"
+                 className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center justify-center font-medium hover:bg-white/20 hover:border-red-500/40 transition-colors text-xs md:text-sm"
+               >
+                 Apply
+               </Link>
+             </motion.div>
           </div>
         </motion.div>
       </section>
 
       {/* SECTION 2: Studio Stats */}
-      <section className="w-full bg-[#0a0a0a] py-24 lg:py-32 relative overflow-hidden">
+      <section id="about" className="w-full bg-[#0a0a0a] py-24 lg:py-32 relative overflow-hidden">
         <div className="container mx-auto px-6 lg:px-12">
           
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-8">
@@ -629,19 +621,16 @@ export default function Home() {
                 >
                   <div className="flex justify-between items-start w-full">
                     <div>
-                      <div className="flex -space-x-2 mb-4">
-                        <div className="w-8 h-8 rounded-full bg-neutral-800 border-2 border-[#121212] z-40" />
-                        <div className="w-8 h-8 rounded-full bg-neutral-700 border-2 border-[#121212] z-30" />
-                        <div className="w-8 h-8 rounded-full bg-neutral-600 border-2 border-[#121212] z-20" />
-                        <div className="w-8 h-8 rounded-full bg-neutral-500 border-2 border-[#121212] z-10" />
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/15 border border-red-500/30 text-[10px] font-mono uppercase tracking-wider text-red-400 font-bold mb-4">
+                        DIRECT 1-ON-1
                       </div>
-                      <p className="text-[9px] text-neutral-500 uppercase tracking-widest font-bold">Personalized For You</p>
+                      <p className="text-[9px] text-neutral-400 uppercase tracking-widest font-bold">Personalized For You</p>
                     </div>
                     
                     <div className="w-16 h-20 bg-red-600/80 blur-[2px] rounded-sm" />
                   </div>
                   <div className="text-left mt-auto">
-                    <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest leading-[1.8]">
+                    <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest leading-[1.8]">
                       <span className="text-red-500">100%</span> Custom<br/>
                       Built around your<br/>
                       goals and lifestyle
@@ -653,14 +642,14 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Bottom Logos */}
+          {/* Bottom Ethos Ticker */}
           <motion.div 
             initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={driftUp} transition={{ delay: 0.5 }}
             className="w-full flex justify-between items-center mt-24 pt-10 border-t border-neutral-900/50 overflow-x-auto gap-8 pb-4"
           >
             {['TRAIN WITH PURPOSE', 'BUILD YOUR FOUNDATION', 'BREAK YOUR PLATEAU', 'NO SHORTCUTS', 'NO EXCUSES', 'JUST PROGRESS'].map((logo, i) => (
-              <div key={i} className="flex items-center gap-2 text-neutral-600 font-bold uppercase tracking-[0.2em] text-[10px] whitespace-nowrap opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
-                <div className="w-3 h-3 rounded-full bg-neutral-800" />
+              <div key={i} className="flex items-center gap-2 text-neutral-400 font-bold uppercase tracking-[0.2em] text-[10px] whitespace-nowrap select-none">
+                <div className="w-2 h-2 rounded-full bg-red-600" />
                 {logo}
               </div>
             ))}
@@ -672,10 +661,11 @@ export default function Home() {
       {/* SECTION 3: Journey Fan-Out */}
       <JourneySection />
 
-      {/* SECTION 4: Gallery */}
+
+      {/* SECTION 5: Gallery */}
       <GallerySection />
 
-      {/* SECTION 5: Contact */}
+      {/* SECTION 6: Contact */}
       <ContactSection />
 
     </main>
@@ -826,13 +816,13 @@ const ContactSection = () => {
                     required
                     style={{ "--placeholder-color": placeholderColor, width: inputWidth } as any}
                     className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
-                    placeholder="Evan Austin"
+                    placeholder="Your name"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Phone</label>
+                  <label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Phone</label>
                   <motion.input 
                     type="tel" 
                     id="phone"
@@ -847,21 +837,21 @@ const ContactSection = () => {
               </div>
               
               <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Email Address</label>
+                <label htmlFor="email" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Email Address</label>
                 <motion.input 
                   type="email" 
                   id="email"
                   required
                   style={{ "--placeholder-color": placeholderColor, width: inputWidth } as any}
                   className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all placeholder-[color:var(--placeholder-color)]"
-                  placeholder="contact@evanaustin.com"
+                  placeholder="your.email@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="goals" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Your Goals</label>
+                <label htmlFor="goals" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Your Goals</label>
                 <motion.textarea 
                   id="goals"
                   required

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  themes: black --default;
+}
 
 :root {
   --background: #ffffff;
@@ -37,6 +40,13 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Antislop R-32: Visible, high-contrast keyboard focus indicators */
+:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 3px;
 }
 
 @utility text-glow {
@@ -46,3 +56,4 @@ body {
 @utility red-glow {
   box-shadow: 0 0 30px 10px rgba(255, 85, 0, 0.2);
 }
+

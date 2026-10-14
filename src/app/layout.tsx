@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Personal Palace | Premium OS",
-  description: "Become the man in control with OS18",
+  title: "Evan Austin | Elite Athletic & Fitness Coaching",
+  description: "Personalized coaching, competition hypertrophy splits, and discipline-driven training systems by Coach Evan Austin.",
 };
 
 import Navbar from "@/components/Navbar";

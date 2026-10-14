@@ -31,21 +31,22 @@ export default function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-6">Navigation</h4>
+            <h4 className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold mb-6">Navigation</h4>
             <ul className="flex flex-col gap-4 text-sm font-medium">
-              <li><Link href="/#about" className="text-white/80 hover:text-red-500 transition-colors">About</Link></li>
-              <li><Link href="/#programs" className="text-white/80 hover:text-red-500 transition-colors">Programs</Link></li>
-              <li><Link href="/#gallery" className="text-white/80 hover:text-red-500 transition-colors">Gallery</Link></li>
-              <li><Link href="/contact" className="text-white/80 hover:text-red-500 transition-colors">Contact</Link></li>
+              <li><Link href="/#about" className="text-neutral-200 hover:text-red-500 transition-colors">About</Link></li>
+              <li><Link href="/services" className="text-neutral-200 hover:text-red-500 transition-colors">Services</Link></li>
+              <li><Link href="/programs" className="text-neutral-200 hover:text-red-500 transition-colors">Programs</Link></li>
+              <li><Link href="/#gallery" className="text-neutral-200 hover:text-red-500 transition-colors">Gallery</Link></li>
+              <li><Link href="/contact" className="text-neutral-200 hover:text-red-500 transition-colors">Contact</Link></li>
             </ul>
           </div>
 
           {/* Social */}
           <div>
-            <h4 className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-6">Connect</h4>
+            <h4 className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold mb-6">Connect</h4>
             <ul className="flex flex-col gap-4 text-sm font-medium">
-              <li><a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="text-white/80 hover:text-red-500 transition-colors">Instagram</a></li>
-              <li><a href="mailto:contact@evanaustin.com" className="text-white/80 hover:text-red-500 transition-colors">Email</a></li>
+              <li><a href="https://instagram.com/defiantly_jack3d" target="_blank" rel="noreferrer" className="text-neutral-200 hover:text-red-500 transition-colors">Instagram (@defiantly_jack3d)</a></li>
+              <li><a href="mailto:contact@evanaustin.com" className="text-neutral-200 hover:text-red-500 transition-colors">Email (contact@evanaustin.com)</a></li>
             </ul>
           </div>
         </div>
@@ -67,11 +68,12 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="w-full flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-white/30 pt-8 border-t border-white/5">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-widest text-neutral-400 pt-8 border-t border-white/5">
           <p>© {new Date().getFullYear()} EVAN AUSTIN. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
-            <Link href="/" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="/" className="hover:text-white transition-colors">Privacy</Link>
+            <span className="text-neutral-400">Austin Coaching LLC</span>
+            <span>·</span>
+            <Link href="/contact" className="hover:text-white transition-colors">Inquiries</Link>
           </div>
         </div>
       </div>

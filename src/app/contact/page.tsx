@@ -104,19 +104,19 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="name" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Full Name</label>
+                  <label htmlFor="name" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Full Name</label>
                   <input 
                     type="text" 
                     id="name"
                     required
                     className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
-                    placeholder="Evan Austin"
+                    placeholder="Your name"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Phone</label>
+                  <label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Phone</label>
                   <input 
                     type="tel" 
                     id="phone"
@@ -130,20 +130,20 @@ export default function ContactPage() {
               </div>
               
               <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Email Address</label>
+                <label htmlFor="email" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Email Address</label>
                 <input 
                   type="email" 
                   id="email"
                   required
                   className="bg-[#121212] border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-red-500 focus:bg-white/5 transition-all"
-                  placeholder="contact@evanaustin.com"
+                  placeholder="your.email@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label htmlFor="goals" className="text-[10px] uppercase tracking-widest text-white/40 font-bold ml-4">Your Goals</label>
+                <label htmlFor="goals" className="text-[10px] uppercase tracking-widest text-neutral-300 font-bold ml-4">Your Goals</label>
                 <textarea 
                   id="goals"
                   required
