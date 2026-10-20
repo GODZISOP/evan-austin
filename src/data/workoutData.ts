@@ -513,7 +513,9 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         equipment: "Adjustable Incline Bench (set upright ~80°) + Dumbbells",
         betweenExerciseRest: 60,
         generalFormCue: "Press up in a natural arc, avoid slamming dumbbells together, keep abs braced.",
-        demoImage: "/images/hero-split.png",
+        demoImage: "/images/exercises/seated-dumbbell-shoulder-press.png",
+        startPositionImage: "/images/exercises/seated-dumbbell-shoulder-press-start.png",
+        finishPositionImage: "/images/exercises/seated-dumbbell-shoulder-press-finish.png",
         sets: [
           { setNumber: 1, reps: "12-15 Reps", restSeconds: 45, notes: "Smooth warm-up groove" },
           { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy working weight" },
@@ -590,7 +592,9 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         equipment: "Pair of Heavy Dumbbells",
         betweenExerciseRest: 45,
         generalFormCue: "Shrug straight up to ears, squeeze for 2 seconds at peak, lower under control.",
-        demoImage: "/images/hero2.png",
+        demoImage: "/images/exercises/dumbbell-shrugs.png",
+        startPositionImage: "/images/exercises/dumbbell-shrugs-start.png",
+        finishPositionImage: "/images/exercises/dumbbell-shrugs-finish.png",
         sets: [
           { setNumber: 1, reps: "15 Reps", restSeconds: 45, notes: "Warm up traps with 2s hold" },
           { setNumber: 2, reps: "12-15 Reps", restSeconds: 45, notes: "Heavy clean shrugging" },
