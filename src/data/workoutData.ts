@@ -9,7 +9,7 @@ export interface ExerciseSet {
 export interface Exercise {
   id: string;
   slug: string;
-  dayId: "leg-day" | "arm-day";
+  dayId: "leg-day" | "arm-day" | "chest-day" | "back-day" | "shoulder-day";
   dayName: string;
   title: string;
   subtitle: string;
@@ -19,6 +19,8 @@ export interface Exercise {
   betweenExerciseRest: number; // in seconds
   generalFormCue: string;
   demoImage: string;
+  startPositionImage?: string;
+  finishPositionImage?: string;
   sets: ExerciseSet[];
   howToPerform: {
     setup: string[];
@@ -29,7 +31,7 @@ export interface Exercise {
 }
 
 export interface WorkoutDay {
-  id: "leg-day" | "arm-day";
+  id: "leg-day" | "arm-day" | "chest-day" | "back-day" | "shoulder-day";
   slug: string;
   name: string;
   tagline: string;
@@ -40,7 +42,582 @@ export interface WorkoutDay {
   exercises: Exercise[];
 }
 
+export interface StretchItem {
+  id: string;
+  name: string;
+  targetArea: string;
+  durationOrReps: string;
+  instruction: string;
+  image?: string;
+  type: "dynamic" | "static";
+}
+
+export interface CardioProtocol {
+  durationMinutes: number;
+  preferredActivity: string;
+  preferredActivityDetails: string;
+  alternativeActivities: {
+    name: string;
+    setting: string;
+    benefit: string;
+  }[];
+  intensityCue: string;
+  targetHeartRateZone: string;
+}
+
+export interface FinisherRoutine {
+  type: "abs" | "calves";
+  title: string;
+  badge: string;
+  tagline: string;
+  description: string;
+  frequencyRule: string;
+  exercises: {
+    id: string;
+    name: string;
+    targetMuscle: string;
+    sets: number;
+    reps: string;
+    restSeconds: number;
+    cue: string;
+    notes: string;
+  }[];
+}
+
+export interface ScheduledWorkoutDay {
+  workoutNumber: number; // 1 to 28
+  dayOfWeek: string;
+  dayName: string;
+  splitId: "chest-day" | "back-day" | "shoulder-day" | "leg-day" | "arm-day" | "rest";
+  splitName: string;
+  focus: string;
+  coreOrCalf: "abs" | "calves" | "none";
+  cardioMinutes: number;
+  isRest: boolean;
+}
+
+// -------------------------------------------------------------
+// MAIN WORKOUT DAYS: Leg, Arm, Chest, Back, Shoulder
+// -------------------------------------------------------------
 export const WORKOUT_DAYS: WorkoutDay[] = [
+  {
+    id: "chest-day",
+    slug: "chest-day",
+    name: "Chest Day",
+    tagline: "Upper, mid, and lower pectoral density & pressing power",
+    totalExercises: 4,
+    estimatedDuration: "50 - 65 min",
+    targetIntensity: "High hypertrophy tension (RPE 8-9)",
+    badge: "Pectoral Focus",
+    exercises: [
+      {
+        id: "incline-chest-press",
+        slug: "incline-chest-press",
+        dayId: "chest-day",
+        dayName: "Chest Day",
+        title: "Incline Chest Press",
+        subtitle: "Upper Pectoral (Clavicular Head) Focus",
+        primaryMuscles: ["Upper Chest (Pectoralis Major)"],
+        secondaryMuscles: ["Front Deltoids", "Triceps"],
+        equipment: "Incline Press Machine / Dumbbells",
+        betweenExerciseRest: 60,
+        generalFormCue: "Drive through elbows and squeeze upper chest hard at the top. Control descent.",
+        demoImage: "/images/exercises/incline-chest-press.png",
+        startPositionImage: "/images/exercises/incline-chest-press-start.png",
+        finishPositionImage: "/images/exercises/incline-chest-press-finish.png",
+        sets: [
+          { setNumber: 1, reps: "8-12 Reps", restSeconds: 60, notes: "Moderate heavy working set" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 60, notes: "Keep strict elbow angle" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 60, notes: "Final heavy set to near failure" },
+        ],
+        howToPerform: {
+          setup: [
+            "Adjust the seat so handles align with your upper chest line.",
+            "Plant feet firmly on the floor and retract your shoulder blades into the back pad.",
+            "Grip the handles firmly with wrists straight."
+          ],
+          execution: [
+            "Press the handles smoothly forward and upward until arms are almost fully extended.",
+            "Focus on squeezing the upper chest fibers together.",
+            "Lower under complete control for 2-3 seconds until you feel a deep chest stretch."
+          ],
+          proTips: [
+            "Do not allow your shoulders to roll forward at the peak contraction.",
+            "Keep your chin tucked and chest proudly puffed out throughout."
+          ],
+          commonMistakes: [
+            "Flaring elbows straight out at 90 degrees (keep at roughly 45-60 degrees).",
+            "Bouncing out of the bottom stretch position."
+          ]
+        }
+      },
+      {
+        id: "flat-bench-chest-press",
+        slug: "flat-bench-chest-press",
+        dayId: "chest-day",
+        dayName: "Chest Day",
+        title: "Flat Bench Chest Press",
+        subtitle: "Mid & Sternal Pectoral Mass Builder",
+        primaryMuscles: ["Mid Chest (Sternal Head)"],
+        secondaryMuscles: ["Anterior Deltoids", "Triceps"],
+        equipment: "Flat Bench / Machine or Barbell",
+        betweenExerciseRest: 60,
+        generalFormCue: "Retract scapulae, touch lower sternum under control, drive up explosively.",
+        demoImage: "/images/exercises/flat-bench-chest-press.png",
+        startPositionImage: "/images/exercises/flat-bench-chest-press-start.png",
+        finishPositionImage: "/images/exercises/flat-bench-chest-press-finish.png",
+        sets: [
+          { setNumber: 1, reps: "20 Reps", restSeconds: 45, notes: "High-rep warm-up and blood pump" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Increase load to heavy working weight" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 30, notes: "Short rest overload set" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 30, notes: "Maximum effort final set" },
+        ],
+        howToPerform: {
+          setup: [
+            "Lie flat with eyes under the bar or handles, feet flat on the floor.",
+            "Pinch shoulder blades back and down to create a stable pressing platform."
+          ],
+          execution: [
+            "Lower weight smoothly until hands touch or hover right above mid-chest.",
+            "Pause for half a second at the chest stretch.",
+            "Drive upwards through the chest until arms reach near full extension."
+          ],
+          proTips: [
+            "Keep wrists straight above elbows to prevent joint strain.",
+            "Engage leg drive by pushing through the floor without lifting glutes."
+          ],
+          commonMistakes: [
+            "Bouncing the weight off the sternum.",
+            "Lifting hips off the bench during tough reps."
+          ]
+        }
+      },
+      {
+        id: "dumbbell-chest-press",
+        slug: "dumbbell-chest-press",
+        dayId: "chest-day",
+        dayName: "Chest Day",
+        title: "Dumbbell Chest Press",
+        subtitle: "Free-Weight Unilateral Balance & Full ROM",
+        primaryMuscles: ["Chest (Pectoralis Major)"],
+        secondaryMuscles: ["Triceps", "Front Deltoids", "Core Stabilizers"],
+        equipment: "Flat Workout Bench + Pair of Dumbbells",
+        betweenExerciseRest: 60,
+        generalFormCue: "Bring dumbbells wide for deep stretch, press up and converge slightly at peak.",
+        demoImage: "/images/exercises/dumbbell-chest-press.png",
+        startPositionImage: "/images/exercises/dumbbell-chest-press-start.png",
+        finishPositionImage: "/images/exercises/dumbbell-chest-press-finish.png",
+        sets: [
+          { setNumber: 1, reps: "12-15 Reps", restSeconds: 45, notes: "Moderate weight grooving movement" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Step up the dumbbell weight" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy clean reps" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Burnout set with steady tempo" },
+        ],
+        howToPerform: {
+          setup: [
+            "Sit on edge of bench, place dumbbells on knees, kick back into flat position.",
+            "Rotate wrists so palms face slightly inward at 45 degrees."
+          ],
+          execution: [
+            "Lower dumbbells beside your chest with forearms perpendicular to floor.",
+            "Feel a deep, comfortable stretch across both pectorals.",
+            "Press weights back up smoothly in a slight arc."
+          ],
+          proTips: [
+            "Do not bang the dumbbells together at the top; keep constant muscle tension.",
+            "Maintain slight natural arch in the lower back."
+          ],
+          commonMistakes: [
+            "Flaring elbows excessively wide toward shoulders.",
+            "Cutting bottom depth short due to too heavy weight."
+          ]
+        }
+      },
+      {
+        id: "cable-chest-fly",
+        slug: "cable-chest-fly",
+        dayId: "chest-day",
+        dayName: "Chest Day",
+        title: "Cable Chest Fly",
+        subtitle: "Continuous Tension Squeeze & Isolation",
+        primaryMuscles: ["Sternal Pectorals (Inner Chest Squeeze)"],
+        secondaryMuscles: ["Anterior Deltoids"],
+        equipment: "Dual Cable Pulley Station",
+        betweenExerciseRest: 60,
+        generalFormCue: "Maintain fixed elbow bend, bring hands together like hugging a tree, squeeze 1s.",
+        demoImage: "/images/exercises/cable-chest-fly.png",
+        startPositionImage: "/images/exercises/cable-chest-fly-start.png",
+        finishPositionImage: "/images/exercises/cable-chest-fly-finish.png",
+        sets: [
+          { setNumber: 1, reps: "8-12 Reps", restSeconds: 45, notes: "Feel the stretch and contraction" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 35, notes: "Maintain 1-second squeeze at the apex" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 35, notes: "Final pump set to complete muscle exhaustion" },
+        ],
+        howToPerform: {
+          setup: [
+            "Set pulleys at chest height or slightly above, grip single handles.",
+            "Step forward into a staggered stance with chest high and slight forward torso lean."
+          ],
+          execution: [
+            "With arms extended and elbows slightly bent, sweep hands forward in a wide hug arc.",
+            "Bring knuckles or palms to touch in front of your chest.",
+            "Contract chest hard for a full second, then open slowly."
+          ],
+          proTips: [
+            "Lock your elbow angle throughout the entire rep; do not turn it into a press.",
+            "Control the stretch phase completely against cable resistance."
+          ],
+          commonMistakes: [
+            "Letting shoulders roll forward as hands meet.",
+            "Using momentum or swinging the torso."
+          ]
+        }
+      }
+    ]
+  },
+  {
+    id: "back-day",
+    slug: "back-day",
+    name: "Back Day",
+    tagline: "V-taper lat width, middle back thickness, and spinal stability",
+    totalExercises: 4,
+    estimatedDuration: "50 - 65 min",
+    targetIntensity: "Heavy progressive pulling (RPE 8.5)",
+    badge: "Back & Lat Focus",
+    exercises: [
+      {
+        id: "assisted-pull-up",
+        slug: "assisted-pull-up",
+        dayId: "back-day",
+        dayName: "Back Day",
+        title: "Assisted Pull-Up",
+        subtitle: "Vertical Pulling & Upper Lat Wing Expansion",
+        primaryMuscles: ["Latissimus Dorsi", "Teres Major"],
+        secondaryMuscles: ["Biceps", "Rhomboids", "Posterior Deltoids"],
+        equipment: "Assisted Pull-Up Counterbalance Machine",
+        betweenExerciseRest: 60,
+        generalFormCue: "Drive elbows down toward waist, lead with chest to bar, avoid swinging.",
+        demoImage: "/images/exercises/assisted-pull-up.png",
+        startPositionImage: "/images/exercises/assisted-pull-up-start.png",
+        finishPositionImage: "/images/exercises/assisted-pull-up-finish.png",
+        sets: [
+          { setNumber: 1, reps: "8-12 Reps", restSeconds: 40, notes: "Dial in counterbalance weight" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Focus on pulling chest toward handles" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 40, notes: "Controlled negatives on last reps" },
+        ],
+        howToPerform: {
+          setup: [
+            "Select counter-weight assistance, grip wide neutral or overhand handles.",
+            "Kneel or stand onto the assistance pad with core braced and arms fully hung."
+          ],
+          execution: [
+            "Depress your scapulae first, pulling shoulders away from ears.",
+            "Drive elbows down and back, lifting upper body until chin clears grip level.",
+            "Pause at the top, then lower smoothly over 3 seconds to full hang."
+          ],
+          proTips: [
+            "Do not crunch forward at the top; keep chest proud and arch upper thoracic spine.",
+            "Lower completely into a full stretch to activate lower lat insertion."
+          ],
+          commonMistakes: [
+            "Using kicking legs to generate momentum.",
+            "Performing half-reps without full extension."
+          ]
+        }
+      },
+      {
+        id: "single-arm-cable-lat-pulldown",
+        slug: "single-arm-cable-lat-pulldown",
+        dayId: "back-day",
+        dayName: "Back Day",
+        title: "Single-Arm Cable Lat Pulldown",
+        subtitle: "Unilateral Lower Lat Isolation & Peak Tension",
+        primaryMuscles: ["Lower Lats (Iliac Division)"],
+        secondaryMuscles: ["Biceps", "Brachialis", "Forearm"],
+        equipment: "Cable Machine + D-Handle / Bench",
+        betweenExerciseRest: 45,
+        generalFormCue: "Feel the overhead stretch, pull elbow tight down to your back pocket.",
+        demoImage: "/images/exercises/single-arm-cable-lat-pulldown.png",
+        startPositionImage: "/images/exercises/single-arm-cable-lat-pulldown-start.png",
+        finishPositionImage: "/images/exercises/single-arm-cable-lat-pulldown-finish.png",
+        sets: [
+          { setNumber: 1, reps: "12-15 / Arm", restSeconds: 15, notes: "Right arm then left arm, quick swap", isUnilateral: true },
+          { setNumber: 2, reps: "12-15 / Arm", restSeconds: 30, notes: "Increase weight slightly", isUnilateral: true },
+          { setNumber: 3, reps: "8-12 / Arm", restSeconds: 15, notes: "Heavy unilateral working weight", isUnilateral: true },
+          { setNumber: 4, reps: "8-12 / Arm", restSeconds: 30, notes: "Final squeeze at bottom on each arm", isUnilateral: true },
+        ],
+        howToPerform: {
+          setup: [
+            "Attach D-handle to high cable pulley, kneel or sit sideways/facing machine.",
+            "Grab handle with neutral grip, let arm fully extend upward for a deep stretch."
+          ],
+          execution: [
+            "Initiate by depressing your shoulder blade downward.",
+            "Pull elbow down tight along ribcage toward your rear hip pocket.",
+            "Hold peak contraction for 1 second, then release slowly back to full overhead stretch."
+          ],
+          proTips: [
+            "Slight side-crunch of torso at peak contraction helps fully shorten the lat.",
+            "Keep palm neutral (facing inward) to emphasize lat rather than bicep."
+          ],
+          commonMistakes: [
+            "Rotating the whole torso wildly to heave the cable down.",
+            "Restricting the top stretch."
+          ]
+        }
+      },
+      {
+        id: "bent-over-dumbbell-row",
+        slug: "bent-over-dumbbell-row",
+        dayId: "back-day",
+        dayName: "Back Day",
+        title: "Bent-Over Dumbbell Row",
+        subtitle: "Mid-Back Thickness, Rhomboids & Rear Delts",
+        primaryMuscles: ["Middle Back (Rhomboids, Mid-Traps)"],
+        secondaryMuscles: ["Lats", "Rear Delts", "Erector Spinae", "Biceps"],
+        equipment: "Pair of Heavy Dumbbells",
+        betweenExerciseRest: 60,
+        generalFormCue: "Hinge at hips, keep spine neutral, row elbows past ribs and pinch shoulder blades.",
+        demoImage: "/images/exercises/bent-over-dumbbell-row.png",
+        startPositionImage: "/images/exercises/bent-over-dumbbell-row-start.png",
+        finishPositionImage: "/images/exercises/bent-over-dumbbell-row-finish.png",
+        sets: [
+          { setNumber: 1, reps: "20 Reps", restSeconds: 50, notes: "High volume activation set" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 40, notes: "Heavy clean rowing form" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 30, notes: "Shorter rest endurance set" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 30, notes: "Final grinding working set" },
+        ],
+        howToPerform: {
+          setup: [
+            "Stand with feet shoulder-width, hinge hips backward until torso is at ~45-degree angle.",
+            "Hold dumbbells hanging naturally with arms extended, knees softly bent."
+          ],
+          execution: [
+            "Pull dumbbells up toward lower ribcage by driving elbows toward the ceiling.",
+            "Squeeze middle back and shoulder blades tightly together at the top.",
+            "Lower weights smoothly back down to full hang without rounding back."
+          ],
+          proTips: [
+            "Think of your hands as hooks; pull with your back and elbows, not biceps.",
+            "Brace core tightly to protect lumbar spine."
+          ],
+          commonMistakes: [
+            "Rounding lower back like a scared cat.",
+            "Standing up too straight as sets get heavy."
+          ]
+        }
+      },
+      {
+        id: "close-grip-cable-row",
+        slug: "close-grip-cable-row",
+        dayId: "back-day",
+        dayName: "Back Day",
+        title: "Close-Grip Cable Row",
+        subtitle: "Seated Low Row for Dense Mid-Back Mass",
+        primaryMuscles: ["Lats & Mid-Back"],
+        secondaryMuscles: ["Biceps", "Posterior Deltoids", "Forearms"],
+        equipment: "Seated Cable Row Station + V-Bar Handle",
+        betweenExerciseRest: 60,
+        generalFormCue: "Keep chest proud, sit tall, row V-grip to navel, hold 1 second pause.",
+        demoImage: "/images/exercises/close-grip-cable-row.png",
+        startPositionImage: "/images/exercises/close-grip-cable-row-start.png",
+        finishPositionImage: "/images/exercises/close-grip-cable-row-finish.png",
+        sets: [
+          { setNumber: 1, reps: "20 Reps", restSeconds: 45, notes: "Warm-up pump set with full ROM" },
+          { setNumber: 2, reps: "12-15 Reps", restSeconds: 45, notes: "Step up the pin weight" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy strict pulling" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "All-out final set with squeeze" },
+        ],
+        howToPerform: {
+          setup: [
+            "Sit on bench with knees slightly flexed, place feet against foot plates.",
+            "Grasp V-bar handle, sit up tall with back straight and chest puffed."
+          ],
+          execution: [
+            "Pull handle back toward your lower abdomen/navel.",
+            "Drive elbows straight back and flare chest forward into the contraction.",
+            "Pause for a full second, then return forward allowing lats to stretch."
+          ],
+          proTips: [
+            "Do not lean back excessively beyond 10-15 degrees.",
+            "Maintain controlled return so the weight stack doesn't slam."
+          ],
+          commonMistakes: [
+            "Rocking back and forth vigorously using lower back momentum.",
+            "Shrugging shoulders up toward ears during the pull."
+          ]
+        }
+      }
+    ]
+  },
+  {
+    id: "shoulder-day",
+    slug: "shoulder-day",
+    name: "Shoulder Day",
+    tagline: "3D lateral deltoid caps, overhead pressing, and posterior chain balance",
+    totalExercises: 4,
+    estimatedDuration: "50 - 60 min",
+    targetIntensity: "High metabolic burn and strict isolation",
+    badge: "Deltoid Focus",
+    exercises: [
+      {
+        id: "shoulder-lateral-raise",
+        slug: "shoulder-lateral-raise",
+        dayId: "shoulder-day",
+        dayName: "Shoulder Day",
+        title: "Shoulder Lateral Raise",
+        subtitle: "Side Deltoid Width & 3D Shoulder Silhouette",
+        primaryMuscles: ["Lateral Deltoid (Side Shoulder)"],
+        secondaryMuscles: ["Supraspinatus", "Trapezius", "Forearms"],
+        equipment: "Pair of Dumbbells or Dual Cables",
+        betweenExerciseRest: 45,
+        generalFormCue: "Lead with elbows, raise to parallel, pour the pitcher slightly at top.",
+        demoImage: "/images/exercises/shoulder-lateral-raise.png",
+        startPositionImage: "/images/exercises/shoulder-lateral-raise-start.png",
+        finishPositionImage: "/images/exercises/shoulder-lateral-raise-finish.png",
+        sets: [
+          { setNumber: 1, reps: "20 Reps", restSeconds: 45, notes: "High-rep shoulder flush" },
+          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Strict form, no swinging" },
+          { setNumber: 3, reps: "15-20 Reps", restSeconds: 30, notes: "Feel the burn in side cap" },
+          { setNumber: 4, reps: "12-15 Reps", restSeconds: 30, notes: "Final set to absolute failure" },
+        ],
+        howToPerform: {
+          setup: [
+            "Stand tall with feet hip-width apart, holding dumbbells at sides with palms inward.",
+            "Keep a slight bend in your knees and a 5-degree forward torso lean."
+          ],
+          execution: [
+            "Raise weights out to sides in a wide arc until arms are parallel with the floor.",
+            "Keep pinkies slightly elevated so elbows lead the movement.",
+            "Pause briefly at peak shoulder height, then lower with a strict 2-second count."
+          ],
+          proTips: [
+            "Do not shrug your traps up; keep shoulders pushed down away from your neck.",
+            "Think of pushing the dumbbells out toward the walls rather than lifting up."
+          ],
+          commonMistakes: [
+            "Swinging hips or knees to fling the dumbbells upward.",
+            "Lifting hands higher than elbows (which shifts focus to traps)."
+          ]
+        }
+      },
+      {
+        id: "dumbbell-shoulder-press",
+        slug: "dumbbell-shoulder-press",
+        dayId: "shoulder-day",
+        dayName: "Shoulder Day",
+        title: "Seated Dumbbell Shoulder Press",
+        subtitle: "Compound Overhead Pressing for Anterior Deltoid Power",
+        primaryMuscles: ["Anterior Deltoid (Front Shoulder)"],
+        secondaryMuscles: ["Lateral Deltoid", "Triceps", "Upper Chest"],
+        equipment: "Adjustable Incline Bench (set upright ~80°) + Dumbbells",
+        betweenExerciseRest: 60,
+        generalFormCue: "Press up in a natural arc, avoid slamming dumbbells together, keep abs braced.",
+        demoImage: "/images/hero-split.png",
+        sets: [
+          { setNumber: 1, reps: "12-15 Reps", restSeconds: 45, notes: "Smooth warm-up groove" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy working weight" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Solid controlled tempo" },
+          { setNumber: 4, reps: "8-10 Reps", restSeconds: 60, notes: "Heavy final power set" },
+        ],
+        howToPerform: {
+          setup: [
+            "Sit on an upright bench with back firmly against pad.",
+            "Kick dumbbells to shoulder height, palms facing forward or semi-neutral."
+          ],
+          execution: [
+            "Press overhead smoothly until arms reach full extension without locking elbows.",
+            "Lower dumbbells under control until elbows are level with ears (~90 degrees).",
+            "Pause momentarily before driving back up."
+          ],
+          proTips: [
+            "Tuck elbows slightly forward (scapular plane ~30 degrees) to protect rotator cuff.",
+            "Brace core hard to avoid excessive arching of the lower back."
+          ],
+          commonMistakes: [
+            "Hyperextending lower back off the pad.",
+            "Dropping weights too fast and rebounding at the bottom."
+          ]
+        }
+      },
+      {
+        id: "cable-face-pull",
+        slug: "cable-face-pull",
+        dayId: "shoulder-day",
+        dayName: "Shoulder Day",
+        title: "Cable Face Pull",
+        subtitle: "Rear Deltoid & External Rotator Health",
+        primaryMuscles: ["Rear Deltoids", "Infraspinatus & Teres Minor"],
+        secondaryMuscles: ["Rhomboids", "Upper Traps"],
+        equipment: "Cable Machine + Rope Attachment",
+        betweenExerciseRest: 45,
+        generalFormCue: "Set pulley at nose height, pull rope to eyes, pull hands apart at finish.",
+        demoImage: "/images/exercises/tricep-pushdown-cable.png",
+        sets: [
+          { setNumber: 1, reps: "15-20 Reps", restSeconds: 35, notes: "Emphasize rear delt squeeze" },
+          { setNumber: 2, reps: "15-20 Reps", restSeconds: 35, notes: "Pull hands wide apart at the face" },
+          { setNumber: 3, reps: "15-20 Reps", restSeconds: 35, notes: "Final posture & burn set" },
+        ],
+        howToPerform: {
+          setup: [
+            "Attach double-rope handle to cable pulley set at eye level.",
+            "Grip rope with thumbs pointing back toward you, step back into stance."
+          ],
+          execution: [
+            "Pull center of rope toward bridge of your nose.",
+            "Simultaneously pull hands apart and externally rotate forearms up.",
+            "Hold the double-biceps-like contraction for 1 second, then control return."
+          ],
+          proTips: [
+            "Focus on the contraction in the rear shoulder and upper back.",
+            "Do not allow head to poke forward to meet the rope."
+          ],
+          commonMistakes: [
+            "Using excessive weight and turning the move into a sloppy row.",
+            "Not separating hands at the finish."
+          ]
+        }
+      },
+      {
+        id: "dumbbell-shrugs",
+        slug: "dumbbell-shrugs",
+        dayId: "shoulder-day",
+        dayName: "Shoulder Day",
+        title: "Dumbbell Shrugs",
+        subtitle: "Upper Trapezius Elevation & Neck Stability",
+        primaryMuscles: ["Upper Trapezius"],
+        secondaryMuscles: ["Forearms & Grip", "Levator Scapulae"],
+        equipment: "Pair of Heavy Dumbbells",
+        betweenExerciseRest: 45,
+        generalFormCue: "Shrug straight up to ears, squeeze for 2 seconds at peak, lower under control.",
+        demoImage: "/images/hero2.png",
+        sets: [
+          { setNumber: 1, reps: "15 Reps", restSeconds: 45, notes: "Warm up traps with 2s hold" },
+          { setNumber: 2, reps: "12-15 Reps", restSeconds: 45, notes: "Heavy clean shrugging" },
+          { setNumber: 3, reps: "10-12 Reps", restSeconds: 45, notes: "Maximum weight with strict pauses" },
+        ],
+        howToPerform: {
+          setup: [
+            "Stand tall holding heavy dumbbells at your sides with neutral grip.",
+            "Feet shoulder-width apart, chest upright, core engaged."
+          ],
+          execution: [
+            "Elevate shoulders straight up toward ears as high as possible.",
+            "Hold peak contraction for 2 full seconds.",
+            "Lower slowly back down to full stretch."
+          ],
+          proTips: [
+            "Do not roll your shoulders forward or backward (this causes neck and rotator wear).",
+            "Keep head straight and neutral; do not crane neck down."
+          ],
+          commonMistakes: [
+            "Rolling shoulders in circles.",
+            "Bending elbows to cheat the weight up."
+          ]
+        }
+      }
+    ]
+  },
   {
     id: "leg-day",
     slug: "leg-day",
@@ -118,15 +695,15 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
           execution: [
             "Curl your heels up toward your glutes in a smooth, controlled motion.",
             "Pause for half a second at the top and squeeze the back of your legs.",
-            "Slowly lower the weight until your legs are nearly straight."
+            "Lower the weight back down slowly; do not let it drop."
           ],
           proTips: [
-            "Pull your toes up toward your shins during the curl for a deeper burn.",
-            "Keep your stomach and hips pressed into the bench the whole time."
+            "Keep your toes pointed toward your shins (dorsiflexion) to activate hamstrings better.",
+            "Keep your hips pressed down into the bench throughout the entire movement."
           ],
           commonMistakes: [
-            "Arching your lower back to yank the weight up.",
-            "Stopping halfway instead of getting a full curl."
+            "Arching lower back to heave the weight up.",
+            "Only moving the weight half-way down."
           ]
         }
       },
@@ -136,37 +713,37 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         dayId: "leg-day",
         dayName: "Leg Day",
         title: "Squats",
-        subtitle: "Full Lower Body & Core Power",
-        primaryMuscles: ["Quads", "Glutes"],
+        subtitle: "Complete Lower Body Mass Builder",
+        primaryMuscles: ["Quadriceps", "Glutes"],
         secondaryMuscles: ["Hamstrings", "Lower Back", "Core"],
-        equipment: "Barbell / Squat Rack / Smith Machine",
-        betweenExerciseRest: 90,
-        generalFormCue: "Brace your core tight, keep chest up, and squat down until thighs are parallel to floor.",
+        equipment: "Barbell Squat Rack or Smith Machine",
+        betweenExerciseRest: 75,
+        generalFormCue: "Feet slightly wider than shoulder width. Sit down deep between your hips.",
         demoImage: "/images/exercises/squats.png",
         sets: [
-          { setNumber: 1, reps: "8-12 Reps", restSeconds: 60, notes: "Moderate weight to check form" },
-          { setNumber: 2, reps: "8-12 Reps", restSeconds: 60, notes: "Solid rhythm and depth" },
-          { setNumber: 3, reps: "8-12 Reps", restSeconds: 60, notes: "Heavy working set" },
-          { setNumber: 4, reps: "15 Reps", restSeconds: 60, notes: "Finisher set with high reps and pure focus" },
+          { setNumber: 1, reps: "20 Reps", restSeconds: 45, notes: "Light warm-up with empty bar or light weight" },
+          { setNumber: 2, reps: "12-15 Reps", restSeconds: 45, notes: "Add weight to prepare for working sets" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 60, notes: "Heavy working set with strict form" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 60, notes: "Maximum effort final set" },
         ],
         howToPerform: {
           setup: [
-            "Rest the bar securely across your upper back muscles (not on your neck).",
-            "Stand with feet shoulder-width apart, toes turned slightly out.",
-            "Take a deep breath into your belly and brace your stomach like you are taking a punch."
+            "Set bar at collarbone height. Step under and rest bar securely on upper back traps.",
+            "Grip the bar tightly, unrack, and take two small steps back.",
+            "Set feet slightly wider than shoulder width, with toes pointed out 15-30 degrees."
           ],
           execution: [
-            "Bend at your knees and hips together, pushing your knees outward in line with your toes.",
-            "Lower down until your thighs are at least parallel to the floor.",
-            "Push through your whole foot to drive smoothly back up to standing."
+            "Take a deep breath into your belly and brace your core like preparing for a punch.",
+            "Bend knees and hips at the same time, sitting down until thighs are parallel to floor.",
+            "Drive through your whole foot (heel and mid-foot) to stand back up powerfully."
           ],
           proTips: [
-            "Keep your chest proud and eyes looking straight ahead.",
-            "On the final 15-rep set, choose a safe weight that allows clean depth."
+            "Keep your chest proud and eyes looking forward, not down at your feet.",
+            "Push your knees outward in the direction your toes are pointing."
           ],
           commonMistakes: [
-            "Letting your knees cave inward toward each other.",
-            "Bending forward from your waist instead of sitting down between your hips."
+            "Letting knees cave inward during the ascent.",
+            "Rounds in lower back at the bottom of the squat."
           ]
         }
       },
@@ -175,37 +752,37 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         slug: "inner-hip-abductions",
         dayId: "leg-day",
         dayName: "Leg Day",
-        title: "Inner Hip Abductions",
-        subtitle: "Inner Thighs (Adductors) Strengthening",
-        primaryMuscles: ["Inner Thighs (Adductors)"],
-        secondaryMuscles: ["Groin Stabilizers"],
-        equipment: "Hip Adductor Machine",
+        title: "Inner Hip Abductions (Adductors)",
+        subtitle: "Inner Thigh Strength & Pelvis Stability",
+        primaryMuscles: ["Inner Thighs (Hip Adductors)"],
+        secondaryMuscles: ["Groin", "Lower Core"],
+        equipment: "Seated Adductor Machine",
         betweenExerciseRest: 45,
-        generalFormCue: "Squeeze pads together smoothly. Do not slam the weights together in the middle.",
+        generalFormCue: "Squeeze knees inward together smoothly. Hold for 1 second at the touch.",
         demoImage: "/images/exercises/inner-hip-abductions.png",
         sets: [
-          { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Squeeze and hold for 1 second" },
-          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Steady pace with no resting" },
-          { setNumber: 3, reps: "15-20 Reps", restSeconds: 30, notes: "Keep tension on the muscles" },
-          { setNumber: 4, reps: "15-20 Reps", restSeconds: 30, notes: "Finish all 20 reps strong" },
+          { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Light weight to warm up inner thigh muscles" },
+          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Controlled smooth speed" },
+          { setNumber: 3, reps: "15-20 Reps", restSeconds: 30, notes: "Hold each rep for 1 full second at the center" },
+          { setNumber: 4, reps: "12-15 Reps", restSeconds: 30, notes: "Heavy final pump set" },
         ],
         howToPerform: {
           setup: [
-            "Sit with your back flat against the seat pad.",
-            "Open your legs wide to a comfortable stretch position."
+            "Sit with back flat against backrest. Open the pads wide to a comfortable stretch.",
+            "Place your inner knees against the padded arm rests."
           ],
           execution: [
-            "Use your inner thighs to pull your knees inward until the pads meet.",
-            "Hold the pads together for a solid 1 second squeeze.",
-            "Return wide slowly and under control without letting the weights clang."
+            "Squeeze your legs inward together against the resistance until pads touch.",
+            "Hold the pads together tightly for 1 second to maximize inner thigh contraction.",
+            "Slowly open legs back to the starting stretch position over 2 seconds."
           ],
           proTips: [
-            "Inner thighs build overall leg thickness and keep your hips injury-free.",
-            "Keep your feet relaxed so your thighs do the actual work."
+            "Do not let the weight stack slam between reps.",
+            "Sit tall with your spine neutral; avoid leaning too far forward."
           ],
           commonMistakes: [
-            "Using fast jerking motions or bouncing the pads together.",
-            "Leaning forward off the seat back."
+            "Using momentum or bouncing legs inward.",
+            "Setting the start position too wide causing groin discomfort."
           ]
         }
       },
@@ -214,37 +791,37 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         slug: "outer-hip-abductions",
         dayId: "leg-day",
         dayName: "Leg Day",
-        title: "Outer Hip Abductions",
-        subtitle: "Side Glutes & Hip Stability",
-        primaryMuscles: ["Side Glutes (Glute Medius)"],
-        secondaryMuscles: ["Hip Stabilizers"],
-        equipment: "Hip Abductor Machine",
+        title: "Outer Hip Abductions (Glutes)",
+        subtitle: "Side Glutes & Hip Stability Focus",
+        primaryMuscles: ["Outer Glutes (Gluteus Medius & Minimus)"],
+        secondaryMuscles: ["Tensor Fasciae Latae (TFL)"],
+        equipment: "Seated Abductor Machine",
         betweenExerciseRest: 45,
-        generalFormCue: "Push out through the sides of your knees, not your feet.",
+        generalFormCue: "Push knees outward as wide as possible. Squeeze the side of your hips.",
         demoImage: "/images/exercises/outer-hip-abductions.png",
         sets: [
-          { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Wide outward drive" },
-          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Hold the squeeze at full width" },
-          { setNumber: 3, reps: "15-20 Reps", restSeconds: 30, notes: "Stay in full control" },
-          { setNumber: 4, reps: "15-20 Reps", restSeconds: 30, notes: "Burnout set to full fatigue" },
+          { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Moderate warm-up set" },
+          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Keep tension on the outer glutes" },
+          { setNumber: 3, reps: "15-20 Reps", restSeconds: 30, notes: "Pause for 1 second at maximum width" },
+          { setNumber: 4, reps: "12-15 Reps", restSeconds: 30, notes: "Burnout set with heavy weight" },
         ],
         howToPerform: {
           setup: [
-            "Set the pads on the outside of your knees.",
-            "Sit tall with your back flat against the backrest."
+            "Adjust pads so they rest on the outside of your knees.",
+            "Sit back firmly in the seat and grip the side handles."
           ],
           execution: [
-            "Push your knees outward as wide as you can against the resistance.",
-            "Hold at the widest point for 1 second to feel your side glutes fire.",
-            "Bring your knees back in slowly without letting the weight stack rest."
+            "Push your knees apart as wide as possible against the pads.",
+            "Hold the wide position for 1 second and feel your side glutes fire.",
+            "Allow legs to come back together slowly under full control."
           ],
           proTips: [
-            "A slight lean forward from the hips can make you feel your glutes even more.",
-            "Drive through your knees rather than turning your feet outward."
+            "Leaning slightly forward from your hips can increase glute activation.",
+            "Focus on pushing through your knees, not just your feet."
           ],
           commonMistakes: [
-            "Pushing with your ankles instead of your knees.",
-            "Letting the weights snap back together without controlling the return."
+            "Letting knees snap inward quickly on the return.",
+            "Only opening half way."
           ]
         }
       },
@@ -253,37 +830,37 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         slug: "lunges",
         dayId: "leg-day",
         dayName: "Leg Day",
-        title: "Lunges",
-        subtitle: "Single-Leg Balance & Glute Burn",
-        primaryMuscles: ["Quads", "Glutes"],
-        secondaryMuscles: ["Hamstrings", "Calves", "Core Balance"],
-        equipment: "Dumbbells or Bodyweight",
-        betweenExerciseRest: 75,
-        generalFormCue: "Take a long step, bend both knees to 90 degrees, and touch back knee gently to the floor.",
+        title: "Walking or Stationary Lunges",
+        subtitle: "Unilateral Balance, Glute & Quad Development",
+        primaryMuscles: ["Quadriceps", "Glutes"],
+        secondaryMuscles: ["Hamstrings", "Calves", "Core"],
+        equipment: "Pair of Dumbbells or Bodyweight",
+        betweenExerciseRest: 60,
+        generalFormCue: "Step forward into a deep bend. Front knee stays over front ankle.",
         demoImage: "/images/exercises/lunges.png",
         sets: [
-          { setNumber: 1, reps: "30 Steps", restSeconds: 60, notes: "15 steps on each leg" },
-          { setNumber: 2, reps: "40 Steps", restSeconds: 60, notes: "20 steps on each leg (peak endurance)" },
-          { setNumber: 3, reps: "30 Steps", restSeconds: 75, notes: "Weighted or bodyweight steps" },
-          { setNumber: 4, reps: "30 Steps", restSeconds: 75, notes: "Final mental toughness test" },
+          { setNumber: 1, reps: "8-12 Reps / Leg", restSeconds: 45, notes: "Moderate weight stepping smoothly", isUnilateral: true },
+          { setNumber: 2, reps: "8-12 Reps / Leg", restSeconds: 45, notes: "Keep chest tall and balance steady", isUnilateral: true },
+          { setNumber: 3, reps: "8-12 Reps / Leg", restSeconds: 45, notes: "Deep back knee drop on every rep", isUnilateral: true },
+          { setNumber: 4, reps: "8-12 Reps / Leg", restSeconds: 45, notes: "Final grinding burnout set", isUnilateral: true },
         ],
         howToPerform: {
           setup: [
-            "Stand tall holding dumbbells at your sides (or hands on hips for bodyweight).",
-            "Keep your shoulders back and look straight ahead."
+            "Stand tall holding dumbbells at your sides with arms relaxed.",
+            "Engage your abs and keep your head and chest upright."
           ],
           execution: [
-            "Step forward with a long stride, dropping your back knee straight down toward the ground.",
-            "Both knees should bend to roughly 90 degrees at the bottom.",
-            "Push through your front heel to step up into the next lunge."
+            "Take a big step forward with one leg.",
+            "Lower hips until your front thigh is parallel to floor and back knee hovers 1 inch above ground.",
+            "Push through your front heel to stand back up or step into the next stride."
           ],
           proTips: [
-            "Keep your feet hip-width apart like you are walking on train tracks, not a tightrope.",
-            "Never bang your back knee onto the hard floor; lower it gently."
+            "Keep torso upright; do not fold forward over your front thigh.",
+            "Keep your front knee tracking in line with your second toe."
           ],
           commonMistakes: [
-            "Taking steps that are too short, which puts excess pressure on your front knee.",
-            "Slouching your chest forward over your thigh."
+            "Taking too short of a step, putting excessive pressure on the front knee.",
+            "Banging the back knee into the hard floor."
           ]
         }
       },
@@ -292,37 +869,38 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         slug: "inverted-leg-press",
         dayId: "leg-day",
         dayName: "Leg Day",
-        title: "Inverted Leg Press",
-        subtitle: "Heavy Leg Sled Press (45 Degree or Vertical)",
-        primaryMuscles: ["Quads", "Glutes"],
-        secondaryMuscles: ["Hamstrings"],
-        equipment: "45-Degree Leg Press or Vertical Sled Machine",
-        betweenExerciseRest: 60,
-        generalFormCue: "Never lock your knees at the top! Keep smooth continuous tension on your thighs.",
+        title: "Inverted / 45° Leg Press",
+        subtitle: "Heavy Compound Lower Body Loading",
+        primaryMuscles: ["Quadriceps", "Glutes"],
+        secondaryMuscles: ["Hamstrings", "Calves"],
+        equipment: "45-Degree Leg Press Machine",
+        betweenExerciseRest: 75,
+        generalFormCue: "Lower the platform deep without letting your lower back peel off the pad.",
         demoImage: "/images/exercises/inverted-leg-press.png",
         sets: [
-          { setNumber: 1, reps: "8-12 Reps", restSeconds: 60, notes: "Deep, controlled lower" },
-          { setNumber: 2, reps: "8-12 Reps", restSeconds: 60, notes: "Steady smooth tempo" },
-          { setNumber: 3, reps: "8-12 Reps", restSeconds: 60, notes: "Heavy working weight" },
-          { setNumber: 4, reps: "8-12 Reps", restSeconds: 60, notes: "Max effort final working set" },
+          { setNumber: 1, reps: "20 Reps", restSeconds: 45, notes: "Warm-up set with smooth tempo" },
+          { setNumber: 2, reps: "15 Reps", restSeconds: 45, notes: "Add 45lb plates" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 60, notes: "Heavy working set" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 60, notes: "Final heavy set - full depth" },
         ],
         howToPerform: {
           setup: [
-            "Sit deep into the seat with your back and hips firmly pressed against the padding.",
-            "Place your feet shoulder-width apart in the center of the platform."
+            "Sit in the seat with your back and hips firmly pressed against the support pads.",
+            "Place feet shoulder-width apart in the center of the sled platform.",
+            "Release safety handles while holding side handles firmly."
           ],
           execution: [
-            "Release safety handles and lower the sled smoothly until your knees bend to about 90 degrees.",
-            "Do not allow your lower back or tailbone to round off the seat pad.",
-            "Press through your heels and mid-foot to push the sled back up, stopping just before locking your knees."
+            "Lower the weight sled toward you until your knees bend to roughly 90 degrees.",
+            "Make sure your tailbone stays glued to the seat at the bottom.",
+            "Press the platform back up through mid-foot and heels without locking knees."
           ],
           proTips: [
-            "Always keep a soft bend in your knees at the top to protect your joints.",
-            "Hold the side handles tight to keep your rear glued into the seat."
+            "Never lock your knees aggressively at the top of the movement.",
+            "Keep hands firmly on the side handles to keep your hips seated."
           ],
           commonMistakes: [
-            "Snapping and locking your knees straight under heavy weight.",
-            "Letting the weight push your hips off the pad at the bottom."
+            "Allowing lower back to curl off the pad at deep flexion.",
+            "Placing feet too low on platform, causing excessive knee shear."
           ]
         }
       }
@@ -332,48 +910,49 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
     id: "arm-day",
     slug: "arm-day",
     name: "Arm Day",
-    tagline: "Build bigger biceps and horseshoe triceps",
+    tagline: "Build sleeve-filling biceps, brachialis, and tricep mass",
     totalExercises: 6,
-    estimatedDuration: "50 - 60 min",
-    targetIntensity: "Hard effort (leave 0-1 rep in the tank)",
-    badge: "Arm Builder",
+    estimatedDuration: "55 - 65 min",
+    targetIntensity: "High pump & burn (RPE 8.5)",
+    badge: "Arm Hypertrophy",
     exercises: [
       {
-        id: "combined-bicep-hammer-curl",
-        slug: "combined-bicep-hammer-curl",
+        id: "preacher-curl",
+        slug: "preacher-curl",
         dayId: "arm-day",
         dayName: "Arm Day",
-        title: "Combined Bicep + Hammer Curl",
-        subtitle: "Front Arms & Forearms Combo",
-        primaryMuscles: ["Biceps", "Forearms"],
-        secondaryMuscles: ["Shoulders"],
-        equipment: "Dumbbells",
-        betweenExerciseRest: 75,
-        generalFormCue: "Keep your elbows pinned to your ribs. Do not swing your body.",
-        demoImage: "/images/exercises/combined-bicep-hammer-curl.png",
+        title: "Preacher Curl",
+        subtitle: "Bicep Peak & Short Head Isolation",
+        primaryMuscles: ["Biceps Brachii (Short Head)"],
+        secondaryMuscles: ["Brachialis", "Forearms"],
+        equipment: "Preacher Bench + EZ-Curl Bar or Dumbbells",
+        betweenExerciseRest: 60,
+        generalFormCue: "Armpits locked over top of pad. Control down all the way, squeeze at top.",
+        demoImage: "/images/exercises/preacher-curl.png",
         sets: [
-          { setNumber: 1, reps: "10 Reps", restSeconds: 45, notes: "Combined regular curl and hammer curl warmup" },
-          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Strict form with zero body swing" },
-          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy dumbbell challenge" },
-          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Final grinding set to full bicep pump" },
+          { setNumber: 1, reps: "20 Reps", restSeconds: 45, notes: "Warm-up set with light weight" },
+          { setNumber: 2, reps: "12-15 Reps", restSeconds: 45, notes: "Step up the weight" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy working set with smooth control" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Final burnout set to failure" },
         ],
         howToPerform: {
           setup: [
-            "Stand tall with a dumbbell in each hand, arms resting by your sides.",
-            "Roll your shoulders back, chest up, core braced."
+            "Adjust seat height so your armpits rest comfortably over the top edge of the pad.",
+            "Rest your triceps flat against the slanted pad.",
+            "Grasp the EZ-bar with an underhand grip on the angled inner bends."
           ],
           execution: [
-            "Curl up with palms turning upward toward the ceiling to flex your bicep peak.",
-            "Lower slowly, then curl with palms facing each other (hammer grip) to hit your forearms.",
-            "Keep your elbows locked in place next to your ribs like door hinges."
+            "Curl the bar upward toward your chin by contracting your biceps.",
+            "Squeeze hard at the top position for half a second.",
+            "Lower the bar slowly under control until arms are almost fully extended."
           ],
           proTips: [
-            "Turning your pinky slightly outward at the top gives the greatest bicep squeeze.",
-            "Lower the dumbbells on a slow 2-second count."
+            "Do not lift your upper body or chest off the pad to swing the bar.",
+            "Keep wrists straight or slightly flexed, not bent back."
           ],
           commonMistakes: [
-            "Swinging your back to throw the dumbbells up.",
-            "Letting your elbows drift forward in front of your body."
+            "Hyperextending and violently snapping elbows at bottom.",
+            "Resting the bar at the top instead of keeping constant tension."
           ]
         }
       },
@@ -382,76 +961,76 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         slug: "standing-barbell-curl",
         dayId: "arm-day",
         dayName: "Arm Day",
-        title: "Standing Barbell Bicep Curl",
-        subtitle: "Classic Bicep Mass Builder",
-        primaryMuscles: ["Biceps (Both Heads)"],
-        secondaryMuscles: ["Forearms"],
-        equipment: "Straight Barbell or EZ Curl Bar",
+        title: "Standing Barbell Curl",
+        subtitle: "Heavy Compound Mass for Full Bicep Belly",
+        primaryMuscles: ["Biceps Brachii (Long & Short Heads)"],
+        secondaryMuscles: ["Forearms", "Core"],
+        equipment: "Olympic Straight Bar or EZ Bar",
         betweenExerciseRest: 60,
-        generalFormCue: "Keep upper arms vertical. Squeeze your biceps hard at the top.",
+        generalFormCue: "Pin elbows at your sides. No rocking or swinging back and forth.",
         demoImage: "/images/exercises/standing-barbell-curl.png",
         sets: [
-          { setNumber: 1, reps: "8-12 Reps", restSeconds: 45, notes: "Smooth warm-up working set" },
-          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Strict tempo: 2 seconds down, 1 second up" },
-          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy working weight" },
-          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Push past the burn on your last rep" },
+          { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Strict pump set with no body momentum" },
+          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Keep elbows glued to your ribs" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy set with slow 3-second negative" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Finish every rep with full bicep squeeze" },
         ],
         howToPerform: {
           setup: [
-            "Grip the barbell underhand, hands shoulder-width apart.",
-            "Stand upright with feet shoulder-width, knees slightly soft, core tight."
+            "Stand tall with feet shoulder-width apart, holding barbell at shoulder-width underhand grip.",
+            "Pull shoulders back and pin your elbows lightly into your waist."
           ],
           execution: [
-            "Curl the barbell upward in a smooth arc toward your upper chest.",
-            "Squeeze your biceps hard at the top for 1 full second.",
-            "Lower the barbell under control until your arms are almost completely straight."
+            "Curl the barbell upward while keeping elbows completely motionless.",
+            "Bring the bar up to collarbone height and squeeze biceps aggressively.",
+            "Lower the bar slowly back to full hang over 2 to 3 seconds."
           ],
           proTips: [
-            "Keep your wrists straight and firm throughout the curl.",
-            "Do not lean backward as the bar goes up."
+            "Brace your glutes and abs tightly to avoid leaning backward.",
+            "Do not let your elbows drift forward more than 1-2 inches."
           ],
           commonMistakes: [
-            "Using hips or lower back to swing the bar up.",
-            "Dropping the bar down quickly with no resistance on the descent."
+            "Swinging hips or knees to cheat the weight up.",
+            "Dropping the bar down quickly with no eccentric resistance."
           ]
         }
       },
       {
-        id: "preacher-curl",
-        slug: "preacher-curl",
+        id: "combined-bicep-hammer-curl",
+        slug: "combined-bicep-hammer-curl",
         dayId: "arm-day",
         dayName: "Arm Day",
-        title: "Preacher Curl on Curl Pad",
-        subtitle: "Strict Bicep Isolation (Zero Cheating)",
-        primaryMuscles: ["Biceps (Inner Peak)"],
-        secondaryMuscles: ["Forearms"],
-        equipment: "Preacher Bench + EZ Curl Bar",
+        title: "Combined Bicep & Hammer Curls",
+        subtitle: "Bicep Peak Plus Outer Arm (Brachialis) Thickness",
+        primaryMuscles: ["Brachialis", "Brachioradialis", "Biceps"],
+        secondaryMuscles: ["Forearms & Grip"],
+        equipment: "Pair of Medium/Heavy Dumbbells",
         betweenExerciseRest: 60,
-        generalFormCue: "Rest armpits right over the top of the pad. Do not lift off the bench.",
-        demoImage: "/images/exercises/preacher-curl.png",
+        generalFormCue: "Neutral grip with palms facing each other. Squeeze outer forearm at top.",
+        demoImage: "/images/exercises/combined-bicep-hammer-curl.png",
         sets: [
-          { setNumber: 1, reps: "8-12 Reps", restSeconds: 45, notes: "Strict tempo on the sloped pad" },
-          { setNumber: 2, reps: "8-10 Reps", restSeconds: 45, notes: "Heavier weight with solid control" },
-          { setNumber: 3, reps: "8-10 Reps", restSeconds: 45, notes: "High intensity working set" },
-          { setNumber: 4, reps: "8-10 Reps", restSeconds: 45, notes: "Final grinding set to complete exhaustion" },
+          { setNumber: 1, reps: "12-15 Reps", restSeconds: 45, notes: "Standard underhand curl immediately into hammer curl" },
+          { setNumber: 2, reps: "8-12 Reps", restSeconds: 45, notes: "Heavy dumbbells, strict control" },
+          { setNumber: 3, reps: "8-12 Reps", restSeconds: 45, notes: "Feel the brachialis on the side of the arm" },
+          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Final grinding combination set" },
         ],
         howToPerform: {
           setup: [
-            "Adjust the seat so your armpits rest comfortably over the top edge of the pad.",
-            "The back of your arms should rest flat against the cushion."
+            "Stand tall holding dumbbells with palms facing each other (neutral grip).",
+            "Keep feet grounded, chest up, and shoulders packed down."
           ],
           execution: [
-            "Hold the EZ bar with an underhand grip and curl upward toward your shoulders.",
-            "Squeeze your biceps tightly at the top without lifting your arms off the pad.",
-            "Lower the bar slowly until your arms are nearly straight, but stop just before full lockout."
+            "Perform standard curls rotating palms up, then switch to hammer curls (palms facing inward).",
+            "Lift dumbbell straight up toward your front shoulder like swinging a hammer.",
+            "Pause at the top for a squeeze, then lower with total control."
           ],
           proTips: [
-            "Never bounce the bar off the bottom or hyperextend your elbows.",
-            "Keep your upper body relaxed and let the biceps do 100% of the lifting."
+            "Hammer grip targets the brachialis, which pushes your bicep up higher.",
+            "Keep wrists rigid and locked; do not bend wrists upward."
           ],
           commonMistakes: [
-            "Letting the bar drop fast and jarring your elbow joints.",
-            "Leaning back off the seat to help lift the weight."
+            "Swinging weights out wide away from the body.",
+            "Using momentum from shoulders."
           ]
         }
       },
@@ -460,37 +1039,38 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
         slug: "tricep-pushdown-cable",
         dayId: "arm-day",
         dayName: "Arm Day",
-        title: "Cable Tricep Pushdown (with Bar)",
-        subtitle: "Back of Arm (Triceps) Horseshoe Builder",
-        primaryMuscles: ["Back of Arm (Triceps)"],
-        secondaryMuscles: ["Forearm Grip"],
-        equipment: "Cable Station + Straight or Angled Bar",
-        betweenExerciseRest: 60,
-        generalFormCue: "Pin your elbows to your sides. Push straight down until your arms are completely straight.",
+        title: "Tricep Pushdown (Straight Bar or V-Bar)",
+        subtitle: "Tricep Lateral & Medial Head Focus",
+        primaryMuscles: ["Triceps (Lateral Head)"],
+        secondaryMuscles: ["Triceps (Medial Head)", "Forearms"],
+        equipment: "Cable Station + Straight Bar or V-Bar Attachment",
+        betweenExerciseRest: 45,
+        generalFormCue: "Pin upper arms to your sides. Lock out completely at the bottom and squeeze.",
         demoImage: "/images/exercises/tricep-pushdown-cable.png",
         sets: [
-          { setNumber: 1, reps: "15 Reps", restSeconds: 45, notes: "Warm-up set to fill triceps with blood" },
-          { setNumber: 2, reps: "8-12 Reps", restSeconds: 30, notes: "Short rest high-tempo set" },
-          { setNumber: 3, reps: "8-12 Reps", restSeconds: 30, notes: "Heavy push set" },
-          { setNumber: 4, reps: "8-12 Reps", restSeconds: 45, notes: "Hard squeeze at full lockout on every rep" },
+          { setNumber: 1, reps: "20 Reps", restSeconds: 30, notes: "Warm-up pump set to lubricate elbow joints" },
+          { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Short rest speed set" },
+          { setNumber: 3, reps: "15-20 Reps", restSeconds: 30, notes: "Hold lockout for 1 full second" },
+          { setNumber: 4, reps: "12-15 Reps", restSeconds: 30, notes: "Heavy final burnout set" },
         ],
         howToPerform: {
           setup: [
-            "Set the cable pulley to the top position and clip on a bar handle.",
-            "Grip the bar overhand, hands shoulder-width apart, and lean slightly forward at your hips."
+            "Clip straight bar or V-bar to high cable pulley.",
+            "Grip bar with overhand grip, step close, and lean slightly forward (5-10 degrees).",
+            "Glue your elbows tight to your sides at roughly 90 degrees."
           ],
           execution: [
-            "Keep your elbows locked firmly against the sides of your ribs.",
-            "Push the bar down until your arms are fully straight, squeezing your triceps hard.",
-            "Slowly let the bar come back up to chest level, keeping your elbows fixed in place."
+            "Push the bar straight down by extending elbows until arms are completely straight.",
+            "Squeeze triceps as hard as possible at the bottom lockout for 1 second.",
+            "Allow bar to rise slowly back up to chest height while elbows stay pinned."
           ],
           proTips: [
-            "Push through the heel of your palms for the strongest tricep contraction.",
-            "Do not let your shoulders roll forward as you push."
+            "Do not let your elbows flare out or drift forward as the weight goes up.",
+            "Keep wrists stiff and locked straight with your forearms."
           ],
           commonMistakes: [
-            "Flaring your elbows out or letting them swing up and down.",
-            "Using your body weight to press the bar down instead of your arms."
+            "Leaning heavily over the bar and using chest weight to push it down.",
+            "Stopping reps short before full elbow lockout."
           ]
         }
       },
@@ -576,6 +1156,305 @@ export const WORKOUT_DAYS: WorkoutDay[] = [
   }
 ];
 
+// -------------------------------------------------------------
+// PRE-WORKOUT STRETCHES (Dynamic Mobility & Preparation)
+// -------------------------------------------------------------
+export const PRE_WORKOUT_STRETCHES: StretchItem[] = [
+  {
+    id: "dynamic-arm-swings",
+    name: "Dynamic Arm Swings & Chest Openers",
+    targetArea: "Chest, Shoulders & Upper Back",
+    durationOrReps: "15 reps / 45 seconds",
+    instruction: "Swing arms horizontally across chest, alternating which arm crosses over top. Open arms wide to feel a dynamic stretch across pectorals.",
+    type: "dynamic"
+  },
+  {
+    id: "leg-swings-front-lateral",
+    name: "Leg Swings (Front-to-Back & Lateral)",
+    targetArea: "Hamstrings, Quads, Hip Flexors & Adductors",
+    durationOrReps: "12 reps per leg / 60 seconds",
+    instruction: "Hold a wall or post for balance. Swing one leg smoothly forward and backward, then swing side-to-side across your body.",
+    type: "dynamic"
+  },
+  {
+    id: "worlds-greatest-stretch",
+    name: "World's Greatest Stretch (Lunge + Thoracic Reach)",
+    targetArea: "Hips, Groin, Hamstrings, Thoracic Spine",
+    durationOrReps: "5 reps per side / 60 seconds",
+    instruction: "Step forward into a deep lunge. Place hands on floor inside front foot, then reach your inside arm up toward the ceiling with torso rotation.",
+    type: "dynamic"
+  },
+  {
+    id: "cat-cow-mobility",
+    name: "Cat-Cow Spinal Decompression",
+    targetArea: "Entire Spine, Core & Pelvis",
+    durationOrReps: "10 slow cycles / 45 seconds",
+    instruction: "On hands and knees, inhale as you drop your belly and lift your chest/gaze (Cow). Exhale as you arch your spine to ceiling and tuck chin (Cat).",
+    type: "dynamic"
+  },
+  {
+    id: "shoulder-band-dislocates",
+    name: "Shoulder Band / PVC Pass-Throughs",
+    targetArea: "Shoulder Girdle & Rotator Cuff",
+    durationOrReps: "12 - 15 smooth passes",
+    instruction: "Grip a resistance band or PVC pipe with wide grip. Keeping arms straight, rotate smoothly up, overhead, and behind your back.",
+    type: "dynamic"
+  }
+];
+
+// -------------------------------------------------------------
+// POST-WORKOUT STRETCHES (Static Flexibility & Recovery)
+// -------------------------------------------------------------
+export const POST_WORKOUT_STRETCHES: StretchItem[] = [
+  {
+    id: "doorway-chest-stretch",
+    name: "Doorway Pec & Bicep Stretch",
+    targetArea: "Pectoralis Major & Biceps",
+    durationOrReps: "35 - 45 seconds per side",
+    instruction: "Place forearm and elbow against a doorframe at 90 degrees. Step forward gently until you feel a deep stretch across chest and shoulder.",
+    type: "static"
+  },
+  {
+    id: "kneeling-quad-hip-flexor",
+    name: "Kneeling Quad & Hip Flexor Stretch",
+    targetArea: "Quadriceps & Psoas",
+    durationOrReps: "40 - 50 seconds per leg",
+    instruction: "Kneel on one knee with other foot planted forward. Tuck tailbone under and lean hips slightly forward until front thigh stretches deeply.",
+    type: "static"
+  },
+  {
+    id: "single-leg-hamstring-stretch",
+    name: "Single-Leg Hamstring Stretch",
+    targetArea: "Hamstrings & Calves",
+    durationOrReps: "35 - 45 seconds per leg",
+    instruction: "Place one heel on an elevated step or bench with knee straight and foot flexed. Hinge forward from hips with a flat back.",
+    type: "static"
+  },
+  {
+    id: "pigeon-glute-stretch",
+    name: "Pigeon Pose / Glute Stretch",
+    targetArea: "Glutes & Piriformis",
+    durationOrReps: "45 - 60 seconds per side",
+    instruction: "From push-up position, bring right knee behind right wrist with shin angled across mat. Lower hips toward floor and breathe deeply.",
+    type: "static"
+  },
+  {
+    id: "overhead-tricep-lat-stretch",
+    name: "Overhead Tricep & Lat Stretch",
+    targetArea: "Triceps Long Head & Latissimus",
+    durationOrReps: "30 - 45 seconds per arm",
+    instruction: "Reach one arm overhead and bend elbow so hand drops behind neck. Use opposite hand to gently pull elbow back and inward.",
+    type: "static"
+  },
+  {
+    id: "childs-pose-lat-reach",
+    name: "Child's Pose with Lateral Reach",
+    targetArea: "Lower Back, Lats & Hips",
+    durationOrReps: "60 seconds hold",
+    instruction: "Kneel and sit back onto heels, extending arms out forward on the floor. Walk hands to the right side to stretch left lat, then switch.",
+    type: "static"
+  }
+];
+
+// -------------------------------------------------------------
+// 20-MINUTE CARDIO PROTOCOL (Consistent Every Workout Day)
+// -------------------------------------------------------------
+export const CARDIO_PROTOCOL: CardioProtocol = {
+  durationMinutes: 20,
+  preferredActivity: "StairMaster (Stepmill)",
+  preferredActivityDetails: "Continuous stepping at steady moderate-high effort. Keep hands lightly resting for safety without leaning heavy bodyweight onto handrails.",
+  alternativeActivities: [
+    {
+      name: "Incline Treadmill Walk",
+      setting: "12% - 15% Incline @ 3.0 - 3.5 MPH",
+      benefit: "Zero joint impact on knees, heavy glute & calf burn, high caloric burn."
+    },
+    {
+      name: "Assault AirBike",
+      setting: "Steady aerobic pace (50-60 RPM)",
+      benefit: "Full-body cardio involving upper pushing/pulling and lower drive."
+    },
+    {
+      name: "Rowing Machine (Ergometer)",
+      setting: "Damper 4-6, steady 22-26 strokes/min",
+      benefit: "Posterior chain recruitment and cardiovascular endurance."
+    },
+    {
+      name: "Outdoor / Track Tempo Jog",
+      setting: "Zone 2 - Zone 3 conversational pace",
+      benefit: "Classic aerobic baseline conditioning and mental refresh."
+    }
+  ],
+  intensityCue: "Maintain a steady moderate-to-high intensity (Zone 2 - Zone 3, roughly 65-75% max HR) where talking in full sentences becomes difficult. Any fairly intense 20-minute cardio can be used as an alternative.",
+  targetHeartRateZone: "130 - 155 BPM (depending on age & conditioning)"
+};
+
+// -------------------------------------------------------------
+// DEDICATED ABS ROUTINE (Alternating Workout Days)
+// -------------------------------------------------------------
+export const ABS_ROUTINE: FinisherRoutine = {
+  type: "abs",
+  title: "Dedicated Abs Protocol",
+  badge: "Core Hypertrophy",
+  tagline: "Trunk stability, deep rectus abdominis, and serratus development",
+  description: "Performs on alternating workout days (Day 1, Day 3, Day 5, etc.). High focus on abdominal flexion under controlled tension rather than neck pull.",
+  frequencyRule: "Alternates with Calves across workout days (Day 1 = Abs, Day 2 = Calves, Day 3 = Abs, Day 4 = Calves)",
+  exercises: [
+    {
+      id: "hanging-leg-raises",
+      name: "Hanging or Captain's Chair Leg Raises",
+      targetMuscle: "Lower Abdominals & Hip Flexors",
+      sets: 3,
+      reps: "12 - 15 Reps",
+      restSeconds: 45,
+      cue: "Roll your pelvis upward toward your sternum; don't just swing your legs with momentum.",
+      notes: "Can be done on a pull-up bar hanging or in the captain's chair with forearm supports."
+    },
+    {
+      id: "kneeling-cable-crunch",
+      name: "Kneeling Cable Crunches",
+      targetMuscle: "Rectus Abdominis (Upper & Mid Core)",
+      sets: 3,
+      reps: "15 - 20 Reps",
+      restSeconds: 45,
+      cue: "Hold rope handles by your ears. Curl your ribcage down toward your knees like a shrimp.",
+      notes: "Keep your hips high and still; isolate movement to the spine curling."
+    },
+    {
+      id: "ab-wheel-rollouts",
+      name: "Ab Wheel Rollouts / Weighted Plank",
+      targetMuscle: "Transverse Abdominis & Deep Core Wall",
+      sets: 3,
+      reps: "10 - 12 Reps or 60s Hold",
+      restSeconds: 45,
+      cue: "Maintain slight posterior pelvic tilt. Roll forward only as far as you can control without sagging back.",
+      notes: "If ab wheel is unavailable, substitute with a 60-second strict front elbow plank."
+    }
+  ]
+};
+
+// -------------------------------------------------------------
+// DEDICATED CALVES ROUTINE (Alternating Workout Days)
+// -------------------------------------------------------------
+export const CALVES_ROUTINE: FinisherRoutine = {
+  type: "calves",
+  title: "Dedicated Calf Raises Protocol",
+  badge: "Calf Hypertrophy",
+  tagline: "Gastrocnemius and soleus development with deep stretch and peak squeeze",
+  description: "Performs on alternating workout days (Day 2, Day 4, Day 6, etc.). Calves require a full 2-second pause at the bottom stretch to eliminate Achilles tendon rebound.",
+  frequencyRule: "Alternates with Abs across workout days (Day 1 = Abs, Day 2 = Calves, Day 3 = Abs, Day 4 = Calves)",
+  exercises: [
+    {
+      id: "standing-calf-raises",
+      name: "Standing Machine Calf Raises",
+      targetMuscle: "Gastrocnemius (Diamond Calf Peak)",
+      sets: 4,
+      reps: "15 - 20 Reps",
+      restSeconds: 45,
+      cue: "Lower heels deep below platform for 2s pause. Drive up onto big toes and squeeze hard for 1s.",
+      notes: "Zero bouncing. The bottom stretch is where muscle micro-tears stimulate new growth."
+    },
+    {
+      id: "seated-calf-raises",
+      name: "Seated Calf Raise Machine",
+      targetMuscle: "Soleus (Deep Lower Calf Width)",
+      sets: 3,
+      reps: "12 - 15 Reps",
+      restSeconds: 45,
+      cue: "Knees bent at 90 degrees isolate the soleus muscle. Smooth tempo with full range of motion.",
+      notes: "Adjust pad comfortably over lower thighs right above knees."
+    },
+    {
+      id: "single-leg-bodyweight-elevated-raises",
+      name: "Single-Leg Elevated Dumbbell Calf Raise",
+      targetMuscle: "Calf Stabilizers & Unilateral Symmetry",
+      sets: 3,
+      reps: "15 Reps / Leg",
+      restSeconds: 30,
+      cue: "Hold 1 dumbbell in working side hand. Stand on edge of plate or step. Full extension.",
+      notes: "Switch legs with no rest between sides to maintain high metabolic density."
+    }
+  ]
+};
+
+// -------------------------------------------------------------
+// FULL MONTH (28-DAY) REUSABLE SCHEDULE GENERATOR
+// -------------------------------------------------------------
+// Maintains the client requirement:
+// Workout 1 = Abs
+// Workout 2 = Calves
+// Workout 3 = Abs
+// Workout 4 = Calves
+// Continuous rotation throughout all scheduled workouts!
+// -------------------------------------------------------------
+const SPLIT_SEQUENCE: { splitId: WorkoutDay["id"]; splitName: string; focus: string }[] = [
+  { splitId: "chest-day", splitName: "Chest Day", focus: "Upper, Mid & Lower Pectorals" },
+  { splitId: "back-day", splitName: "Back Day", focus: "V-Taper Lats & Mid-Back Thickness" },
+  { splitId: "shoulder-day", splitName: "Shoulder Day", focus: "3D Deltoid Caps & Posture" },
+  { splitId: "leg-day", splitName: "Leg Day", focus: "Quads, Hamstrings & Glutes" },
+  { splitId: "arm-day", splitName: "Arm Day", focus: "Biceps, Brachialis & Triceps" },
+];
+
+const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+export function generateMonthWorkoutSchedule(totalDays: number = 28): ScheduledWorkoutDay[] {
+  const schedule: ScheduledWorkoutDay[] = [];
+  let workoutCounter = 0; // Tracks actual training workouts (1, 2, 3...)
+  let splitIndex = 0;
+
+  for (let day = 1; day <= totalDays; day++) {
+    const dayOfWeekIndex = (day - 1) % 7;
+    const dayOfWeek = DAYS_OF_WEEK[dayOfWeekIndex];
+
+    // Schedule 5 training days (Mon-Fri) and 2 rest days (Sat-Sun) or continuous
+    const isRest = dayOfWeek === "Saturday" || dayOfWeek === "Sunday";
+
+    if (isRest) {
+      schedule.push({
+        workoutNumber: 0,
+        dayOfWeek,
+        dayName: `Day ${day}`,
+        splitId: "rest" as any,
+        splitName: "Active Recovery & Mobility",
+        focus: "Rest, 20-min gentle walk or foam rolling",
+        coreOrCalf: "none",
+        cardioMinutes: 20,
+        isRest: true
+      });
+    } else {
+      workoutCounter += 1;
+      const split = SPLIT_SEQUENCE[splitIndex % SPLIT_SEQUENCE.length];
+      splitIndex += 1;
+
+      // Exact client requirement:
+      // Workout 1 = Abs
+      // Workout 2 = Calves
+      // Workout 3 = Abs
+      // Workout 4 = Calves
+      const coreOrCalf: "abs" | "calves" = workoutCounter % 2 === 1 ? "abs" : "calves";
+
+      schedule.push({
+        workoutNumber: workoutCounter,
+        dayOfWeek,
+        dayName: `Day ${day}`,
+        splitId: split.splitId,
+        splitName: split.splitName,
+        focus: split.focus,
+        coreOrCalf,
+        cardioMinutes: 20,
+        isRest: false
+      });
+    }
+  }
+
+  return schedule;
+}
+
+export const FULL_MONTH_SCHEDULE = generateMonthWorkoutSchedule(28);
+
+// -------------------------------------------------------------
+// HELPER QUERY FUNCTIONS
+// -------------------------------------------------------------
 export function getAllExercises(): Exercise[] {
   return WORKOUT_DAYS.flatMap((day) => day.exercises);
 }
@@ -586,6 +1465,11 @@ export function getExerciseBySlug(slug: string): Exercise | undefined {
 
 export function getWorkoutDayById(id: string): WorkoutDay | undefined {
   return WORKOUT_DAYS.find((day) => day.id === id || day.slug === id);
+}
+
+export function getFinisherRoutineForWorkout(workoutNumber: number): FinisherRoutine {
+  // Odd workout number = Abs, Even workout number = Calves
+  return workoutNumber % 2 === 1 ? ABS_ROUTINE : CALVES_ROUTINE;
 }
 
 export function getAdjacentExercises(currentSlug: string): { prev: Exercise | null; next: Exercise | null } {

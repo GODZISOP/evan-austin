@@ -32,24 +32,107 @@ interface ExerciseDetailViewProps {
 // Consistent cinematic easing curve
 const CINEMATIC_EASE = [0.22, 1, 0.36, 1] as const;
 
-// Professional Muscle Anatomy Visual with Targeted Muscle Pulse
+// Professional Muscle Anatomy Visual with Targeted Muscle Red Neon Glow
 const MuscleAnatomyVisual = ({ 
   exercise 
 }: { 
   exercise: Exercise 
 }) => {
-  const isBicep = exercise.id.includes("bicep") || exercise.id.includes("curl");
-  const isTricep = exercise.id.includes("tricep") || exercise.id.includes("skull");
+  // Comprehensive muscle activation analysis for every split & finisher
+  const pStr = (exercise.primaryMuscles || []).join(" ").toLowerCase();
+  const sStr = (exercise.secondaryMuscles || []).join(" ").toLowerCase();
+  const idStr = `${exercise.id} ${exercise.slug || ""} ${exercise.dayId || ""} ${exercise.title || ""}`.toLowerCase();
   
-  const isQuads = exercise.id.includes("leg-ext") || exercise.id.includes("squat") || exercise.id.includes("press");
-  const isHamstrings = exercise.id.includes("hamstring");
-  const isGlutes = exercise.id.includes("outer") || exercise.id.includes("lunge");
-  const isAdductor = exercise.id.includes("inner");
+  const check = (keywords: string[]) => {
+    const isPrimary = keywords.some(k => pStr.includes(k) || idStr.includes(k));
+    const isSecondary = keywords.some(k => sStr.includes(k));
+    return { isPrimary, isSecondary, isActive: isPrimary || isSecondary };
+  };
+
+  const shoulders = check(["shoulder", "delt", "lateral raise", "face pull", "rotator", "infraspinatus", "teres minor"]);
+  const traps = check(["trap", "rhomboid", "middle back", "upper back"]);
+  const chest = check(["chest", "pec", "pectoral"]);
+  const back = check(["lat", "back", "row", "pull-up", "pulldown", "teres major", "erector"]);
+  const abs = check(["abs", "abdomin", "core", "oblique", "plank", "crunch", "hanging-leg"]);
+  const biceps = check(["bicep", "curl", "brachialis"]);
+  const triceps = check(["tricep", "skull", "pushdown", "dip"]);
+  const forearms = check(["forearm", "wrist"]);
+  const glutes = check(["glute", "hip thrust", "pelvis", "outer thigh", "lunge"]);
+  const quads = check(["quad", "leg ext", "squat", "leg press", "adductor"]);
+  const hamstrings = check(["hamstring", "leg curl", "deadlift", "rdl"]);
+  const calves = check(["calf", "calves", "gastrocnemius", "soleus"]);
+
+  // Fallback to dayId if primary didn't match keyword
+  if (!shoulders.isPrimary && !chest.isPrimary && !back.isPrimary && !quads.isPrimary && !biceps.isPrimary && !triceps.isPrimary && !abs.isPrimary && !calves.isPrimary) {
+    if (exercise.dayId === "shoulder-day") shoulders.isPrimary = true;
+    else if (exercise.dayId === "chest-day") chest.isPrimary = true;
+    else if (exercise.dayId === "back-day") back.isPrimary = true;
+    else if (exercise.dayId === "leg-day") quads.isPrimary = true;
+    else if (exercise.dayId === "arm-day") { biceps.isPrimary = true; triceps.isPrimary = true; }
+    else if (idStr.includes("abs")) abs.isPrimary = true;
+    else if (idStr.includes("calf") || idStr.includes("calves")) calves.isPrimary = true;
+  }
+
+  // Pinpoint overlay position based on primary target
+  let pinTop = "30%";
+  let pinLabel = exercise.primaryMuscles[0] || "Target Muscle";
+
+  if (shoulders.isPrimary) {
+    pinTop = "24%";
+  } else if (traps.isPrimary) {
+    pinTop = "19%";
+  } else if (chest.isPrimary) {
+    pinTop = "29%";
+  } else if (back.isPrimary) {
+    pinTop = "34%";
+  } else if (biceps.isPrimary || triceps.isPrimary) {
+    pinTop = "38%";
+  } else if (abs.isPrimary) {
+    pinTop = "46%";
+  } else if (glutes.isPrimary) {
+    pinTop = "56%";
+  } else if (quads.isPrimary || hamstrings.isPrimary) {
+    pinTop = "68%";
+  } else if (calves.isPrimary) {
+    pinTop = "83%";
+  }
+
+  const getStyle = (status: { isPrimary: boolean; isSecondary: boolean; isActive: boolean }) => {
+    if (status.isPrimary) {
+      return {
+        fill: "#ef4444",
+        className: "transition-all duration-300 animate-pulse text-red-500 fill-red-500"
+      };
+    }
+    if (status.isSecondary) {
+      return {
+        fill: "#dc2626",
+        className: "transition-all duration-300 text-red-600 fill-red-600/90"
+      };
+    }
+    return {
+      fill: "#262626",
+      className: "transition-all duration-300 text-neutral-800 fill-neutral-800"
+    };
+  };
+
+  const shoulderStyle = getStyle(shoulders);
+  const trapStyle = getStyle(traps);
+  const chestStyle = getStyle(chest);
+  const backStyle = getStyle(back);
+  const absStyle = getStyle(abs);
+  const bicepStyle = getStyle(biceps);
+  const tricepStyle = getStyle(triceps);
+  const forearmStyle = getStyle(forearms);
+  const gluteStyle = getStyle(glutes);
+  const quadStyle = getStyle(quads);
+  const hamstringStyle = getStyle(hamstrings);
+  const calfStyle = getStyle(calves);
 
   return (
-    <div className="card relative w-full rounded-2xl bg-neutral-950 p-6 flex flex-col items-center justify-center overflow-hidden border border-white/[0.06]">
-      {/* Background Subtle Radial Gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.12),transparent_70%)] pointer-events-none" />
+    <div className="card relative w-full rounded-2xl bg-neutral-950 p-6 flex flex-col items-center justify-center overflow-hidden border border-red-500/20 shadow-[0_0_40px_rgba(239,68,68,0.08)]">
+      {/* Background Radial Red Ambient Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.18),transparent_70%)] pointer-events-none" />
 
       {/* SVG Silhouette Schematic */}
       <motion.div 
@@ -57,130 +140,232 @@ const MuscleAnatomyVisual = ({
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: false, amount: 0.15 }}
         transition={{ duration: 0.7, delay: 0.1, ease: CINEMATIC_EASE }}
-        className="relative w-48 h-64 flex items-center justify-center"
+        className="relative w-52 h-72 flex items-center justify-center my-1"
       >
         <svg
-          viewBox="0 0 200 300"
-          className="w-full h-full text-neutral-800"
-          fill="currentColor"
+          viewBox="0 0 200 310"
+          className="w-full h-full overflow-visible"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <defs>
+            {/* Vivid Red Neon Glow Filter */}
+            <filter id="neon-red-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur1" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2" />
+              <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
           {/* Head & Neck */}
-          <circle cx="100" cy="35" r="18" className="text-neutral-800" />
-          <path d="M92 53 H108 V62 H92 Z" className="text-neutral-800" />
+          <circle cx="100" cy="28" r="16" fill="#262626" />
+          <rect x="94" y="45" width="12" height="12" rx="3" fill="#262626" />
 
-          {/* Shoulders / Traps */}
-          <path d="M70 65 Q100 60 130 65 L145 78 L55 78 Z" className="text-neutral-800" />
-
-          {/* Chest & Torso */}
-          <path d="M60 80 H140 L132 140 H68 Z" className="text-neutral-800" />
-
-          {/* Abdominals / Core */}
-          <path d="M72 142 H128 L122 175 H78 Z" className="text-neutral-800" />
-
-          {/* Left Arm (Viewer Left) */}
-          <motion.path 
-            d="M52 82 L38 125 L48 130 L60 90 Z" 
-            initial={isBicep || isTricep ? { opacity: 0.4, scale: 0.9 } : undefined}
-            whileInView={isBicep || isTricep ? { opacity: 1, scale: [0.9, 1.04, 1] } : undefined}
-            viewport={{ once: false }}
-            transition={{ duration: 0.7, delay: 0.25, ease: CINEMATIC_EASE }}
-            className={`transition-colors duration-300 ${
-              isBicep ? "text-red-500 fill-red-500" : isTricep ? "text-red-600/80 fill-red-600/80" : "text-neutral-800"
-            }`} 
-          />
-          <path d="M36 128 L28 170 L38 172 L46 132 Z" className="text-neutral-800" />
-
-          {/* Right Arm (Viewer Right) */}
-          <motion.path 
-            d="M148 82 L162 125 L152 130 L140 90 Z" 
-            initial={isBicep || isTricep ? { opacity: 0.4, scale: 0.9 } : undefined}
-            whileInView={isBicep || isTricep ? { opacity: 1, scale: [0.9, 1.04, 1] } : undefined}
-            viewport={{ once: false }}
-            transition={{ duration: 0.7, delay: 0.25, ease: CINEMATIC_EASE }}
-            className={`transition-colors duration-300 ${
-              isBicep ? "text-red-500 fill-red-500" : isTricep ? "text-red-600/80 fill-red-600/80" : "text-neutral-800"
-            }`} 
-          />
-          <path d="M164 128 L172 170 L162 172 L154 132 Z" className="text-neutral-800" />
-
-          {/* Pelvis / Hips */}
-          <motion.path 
-            d="M75 177 H125 L135 200 H65 Z" 
-            initial={isGlutes || isAdductor ? { opacity: 0.4, scale: 0.9 } : undefined}
-            whileInView={isGlutes || isAdductor ? { opacity: 1, scale: [0.9, 1.04, 1] } : undefined}
-            viewport={{ once: false }}
-            transition={{ duration: 0.7, delay: 0.25, ease: CINEMATIC_EASE }}
-            className={`transition-colors duration-300 ${
-              isGlutes || isAdductor ? "text-red-500 fill-red-500" : "text-neutral-800"
-            }`} 
+          {/* Trapezius / Upper Back Collar */}
+          <polygon 
+            points="76,58 100,52 124,58 138,72 62,72" 
+            fill={trapStyle.fill}
+            filter={traps.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={trapStyle.className}
           />
 
-          {/* Left Leg - Quads/Hamstrings */}
-          <motion.path 
-            d="M68 202 L60 250 L86 250 L92 202 Z" 
-            initial={isQuads || isHamstrings ? { opacity: 0.4, scale: 0.9 } : undefined}
-            whileInView={isQuads || isHamstrings ? { opacity: 1, scale: [0.9, 1.04, 1] } : undefined}
-            viewport={{ once: false }}
-            transition={{ duration: 0.7, delay: 0.25, ease: CINEMATIC_EASE }}
-            className={`transition-colors duration-300 ${
-              isQuads ? "text-red-500 fill-red-500" : isHamstrings ? "text-orange-500 fill-orange-500" : "text-neutral-800"
-            }`} 
+          {/* Shoulders / Deltoids (Left & Right) */}
+          <path 
+            d="M48 74 C44 84, 44 98, 52 108 C58 108, 64 96, 62 82 C62 76, 56 72, 48 74 Z" 
+            fill={shoulderStyle.fill}
+            filter={shoulders.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={shoulderStyle.className}
           />
+          <path 
+            d="M152 74 C156 84, 156 98, 148 108 C142 108, 136 96, 138 82 C138 76, 144 72, 152 74 Z" 
+            fill={shoulderStyle.fill}
+            filter={shoulders.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={shoulderStyle.className}
+          />
+
+          {/* Latissimus Dorsi (Wings Flaring from Torso Sides) */}
+          <path 
+            d="M54 104 L66 98 L66 138 L52 130 Z" 
+            fill={backStyle.fill}
+            filter={back.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={backStyle.className}
+          />
+          <path 
+            d="M146 104 L134 98 L134 138 L148 130 Z" 
+            fill={backStyle.fill}
+            filter={back.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={backStyle.className}
+          />
+
+          {/* Chest & Torso (Left & Right Pectorals) */}
+          <path 
+            d="M66 74 H98 V110 C82 112, 68 106, 66 94 Z" 
+            fill={chestStyle.fill}
+            filter={chest.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={chestStyle.className}
+          />
+          <path 
+            d="M102 74 H134 C132 94, 118 106, 102 110 Z" 
+            fill={chestStyle.fill}
+            filter={chest.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={chestStyle.className}
+          />
+
+          {/* Abdominals & Core (6-Pack segmented plates) */}
+          <g filter={abs.isPrimary ? "url(#neon-red-glow)" : undefined} className={absStyle.className}>
+            {/* Upper Abs */}
+            <rect x="73" y="114" width="24" height="13" rx="2" fill={absStyle.fill} />
+            <rect x="103" y="114" width="24" height="13" rx="2" fill={absStyle.fill} />
+            {/* Mid Abs */}
+            <rect x="73" y="130" width="24" height="13" rx="2" fill={absStyle.fill} />
+            <rect x="103" y="130" width="24" height="13" rx="2" fill={absStyle.fill} />
+            {/* Lower Abs */}
+            <path d="M73 146 H97 V164 L76 164 Z" fill={absStyle.fill} />
+            <path d="M103 146 H127 L124 164 H103 Z" fill={absStyle.fill} />
+            {/* Obliques */}
+            <path d="M56 134 L69 134 L70 164 L60 160 Z" fill={absStyle.fill} />
+            <path d="M144 134 L131 134 L130 164 L140 160 Z" fill={absStyle.fill} />
+          </g>
+
+          {/* Biceps (Upper Arm Front/Inner) */}
+          <path 
+            d="M48 102 C44 112, 44 126, 50 134 C55 134, 58 122, 57 110 Z" 
+            fill={bicepStyle.fill}
+            filter={biceps.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={bicepStyle.className}
+          />
+          <path 
+            d="M152 102 C156 112, 156 126, 150 134 C145 134, 142 122, 143 110 Z" 
+            fill={bicepStyle.fill}
+            filter={biceps.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={bicepStyle.className}
+          />
+
+          {/* Triceps (Upper Arm Lateral/Back) */}
+          <path 
+            d="M38 98 C34 108, 36 122, 42 130 C45 130, 48 118, 46 104 Z" 
+            fill={tricepStyle.fill}
+            filter={triceps.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={tricepStyle.className}
+          />
+          <path 
+            d="M162 98 C166 108, 164 122, 158 130 C155 130, 152 118, 154 104 Z" 
+            fill={tricepStyle.fill}
+            filter={triceps.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={tricepStyle.className}
+          />
+
+          {/* Forearms */}
+          <path 
+            d="M34 132 L48 134 L43 172 L30 168 Z" 
+            fill={forearmStyle.fill}
+            filter={forearms.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={forearmStyle.className}
+          />
+          <path 
+            d="M166 132 L152 134 L157 172 L170 168 Z" 
+            fill={forearmStyle.fill}
+            filter={forearms.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={forearmStyle.className}
+          />
+          <circle cx="36" cy="178" r="6" fill="#262626" />
+          <circle cx="164" cy="178" r="6" fill="#262626" />
+
+          {/* Pelvis & Glutes */}
+          <polygon 
+            points="70,166 130,166 124,194 76,194" 
+            fill={gluteStyle.fill}
+            filter={glutes.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={gluteStyle.className}
+          />
+
+          {/* Left Leg - Quads & Hamstrings */}
+          <path 
+            d="M68 198 H94 L87 250 H60 Z" 
+            fill={quads.isPrimary || quads.isSecondary ? quadStyle.fill : hamstrings.isPrimary || hamstrings.isSecondary ? hamstringStyle.fill : "#262626"}
+            filter={quads.isPrimary || hamstrings.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={quads.isPrimary || hamstrings.isPrimary ? "transition-all duration-300 animate-pulse text-red-500 fill-red-500" : undefined}
+          />
+
+          {/* Right Leg - Quads & Hamstrings */}
+          <path 
+            d="M106 198 H132 L140 250 H113 Z" 
+            fill={quads.isPrimary || quads.isSecondary ? quadStyle.fill : hamstrings.isPrimary || hamstrings.isSecondary ? hamstringStyle.fill : "#262626"}
+            filter={quads.isPrimary || hamstrings.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={quads.isPrimary || hamstrings.isPrimary ? "transition-all duration-300 animate-pulse text-red-500 fill-red-500" : undefined}
+          />
+
           {/* Left Calf */}
-          <path d="M62 254 L58 290 L78 290 L84 254 Z" className="text-neutral-800" />
-
-          {/* Right Leg - Quads/Hamstrings */}
-          <motion.path 
-            d="M108 202 L114 250 L140 250 L132 202 Z" 
-            initial={isQuads || isHamstrings ? { opacity: 0.4, scale: 0.9 } : undefined}
-            whileInView={isQuads || isHamstrings ? { opacity: 1, scale: [0.9, 1.04, 1] } : undefined}
-            viewport={{ once: false }}
-            transition={{ duration: 0.7, delay: 0.25, ease: CINEMATIC_EASE }}
-            className={`transition-colors duration-300 ${
-              isQuads ? "text-red-500 fill-red-500" : isHamstrings ? "text-orange-500 fill-orange-500" : "text-neutral-800"
-            }`} 
+          <path 
+            d="M58 254 C52 270, 54 286, 58 294 H78 C82 286, 84 270, 80 254 Z" 
+            fill={calfStyle.fill}
+            filter={calves.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={calfStyle.className}
           />
+
           {/* Right Calf */}
-          <path d="M116 254 L122 290 L142 290 L138 254 Z" className="text-neutral-800" />
+          <path 
+            d="M142 254 C148 270, 146 286, 142 294 H122 C118 286, 116 270, 120 254 Z" 
+            fill={calfStyle.fill}
+            filter={calves.isPrimary ? "url(#neon-red-glow)" : undefined}
+            className={calfStyle.className}
+          />
+
+          {/* Feet */}
+          <path d="M56 296 H80 L76 304 H52 Z" fill="#262626" />
+          <path d="M144 296 H120 L124 304 H148 Z" fill="#262626" />
         </svg>
 
-        {/* Anatomical Target Pin Overlay */}
+        {/* Anatomical Target Pin Overlay (Always Visible with Glowing Red Radar) */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: false }}
-          transition={{ duration: 0.5, delay: 0.35, ease: CINEMATIC_EASE }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          transition={{ duration: 0.5, delay: 0.2, ease: CINEMATIC_EASE }}
+          style={{ top: pinTop }}
+          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20 flex flex-col items-center"
         >
-          {exercise.dayId === "leg-day" && (
-            <div className="absolute top-[72%] w-24 h-12 border border-red-500/40 rounded-full bg-red-600/10 backdrop-blur-[1px] flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-              <span className="badge badge-error badge-xs font-mono">
-                {exercise.primaryMuscles[0]}
-              </span>
-            </div>
-          )}
-
-          {exercise.dayId === "arm-day" && (
-            <div className="absolute top-[38%] w-36 h-10 border border-red-500/40 rounded-full bg-red-600/10 backdrop-blur-[1px] flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-              <span className="badge badge-error badge-xs font-mono">
-                {exercise.primaryMuscles[0]}
-              </span>
-            </div>
-          )}
+          {/* Pulsing red radar ring */}
+          <div className="relative flex items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-8 w-8 rounded-full bg-red-500 opacity-70"></span>
+            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-600 border-2 border-white shadow-[0_0_14px_#ef4444]"></span>
+          </div>
+          <div className="mt-1 px-2.5 py-0.5 rounded-full bg-red-950/95 border border-red-500 text-red-200 text-[10px] font-mono font-bold uppercase tracking-wider shadow-[0_0_18px_rgba(239,68,68,0.5)] whitespace-nowrap">
+            {pinLabel}
+          </div>
         </motion.div>
       </motion.div>
 
-      {/* Target Focus Description */}
-      <div className="mt-4 text-center">
-        <div className="text-xs font-bold text-white uppercase tracking-wider">
-          Primary Target: <span className="text-red-500">{exercise.primaryMuscles.join(", ")}</span>
+      {/* Target Focus Description with Vivid Red Glow Banner */}
+      <div className="mt-3 text-center px-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/70 border border-red-500/50 text-xs font-bold text-white uppercase tracking-wider shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+          <span>PRIMARY TARGET: <span className="text-red-400 font-extrabold">{exercise.primaryMuscles.join(", ")}</span></span>
         </div>
         {exercise.secondaryMuscles.length > 0 && (
-          <div className="text-[11px] text-neutral-400 mt-0.5">
-            Secondary: {exercise.secondaryMuscles.join(", ")}
+          <div className="text-[11px] text-neutral-400 mt-1.5">
+            Secondary: <span className="text-neutral-300">{exercise.secondaryMuscles.join(", ")}</span>
           </div>
         )}
+      </div>
+
+      {/* Activation Status Legend */}
+      <div className="mt-3 pt-3 border-t border-white/[0.06] w-full flex items-center justify-center gap-4 text-[10px] text-neutral-400">
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse" />
+          <span className="text-neutral-300 font-medium">Primary Focus</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-red-700" />
+          <span>Assisting</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-neutral-700" />
+          <span>Resting</span>
+        </span>
       </div>
     </div>
   );
@@ -386,7 +571,7 @@ export default function ExerciseDetailView({
         </div>
       </motion.div>
 
-      {/* 7. LARGE EXERCISE DEMONSTRATION IMAGE (Animate on scroll enter) */}
+      {/* 7. LARGE EXERCISE DEMONSTRATION IMAGE & START/FINISH FORM CARDS */}
       {exercise.demoImage && (
         <motion.div 
           ref={imageContainerRef}
@@ -394,62 +579,105 @@ export default function ExerciseDetailView({
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.8, ease: CINEMATIC_EASE }}
-          className="mb-12"
+          className="mb-12 space-y-6"
         >
-          <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs uppercase tracking-wider text-neutral-400 font-bold flex items-center gap-2">
-              <Dumbbell className="w-4 h-4 text-red-500" />
-              Exercise Demonstration
-            </span>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsImageLightboxOpen(true)}
-              className="btn btn-ghost btn-xs gap-1.5 text-neutral-400 hover:text-white"
-            >
-              <Maximize2 className="w-3.5 h-3.5" />
-              <span>Full View</span>
-            </motion.button>
-          </div>
-
-          <div 
-            onClick={() => setIsImageLightboxOpen(true)}
-            className="card relative rounded-3xl overflow-hidden bg-neutral-950 cursor-pointer group shadow-2xl flex items-center justify-center border border-white/5"
-          >
-            {/* Red/black cinematic reveal overlay that slides across on scroll */}
-            <motion.div
-              initial={{ x: "0%" }}
-              whileInView={{ x: "100%" }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.85, ease: CINEMATIC_EASE }}
-              className="absolute inset-0 z-20 bg-gradient-to-r from-red-950 via-black to-black pointer-events-none"
-            />
-
-            {/* Parallax Image */}
-            <motion.img
-              style={{ y: imageParallaxY }}
-              initial={{ scale: 1.08 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: false }}
-              transition={{ duration: 0.95, ease: CINEMATIC_EASE }}
-              src={exercise.demoImage}
-              alt={`${exercise.title} Demonstration`}
-              className="w-full object-contain max-h-[620px] transition-transform duration-500 group-hover:scale-[1.01]"
-            />
-
-            {/* Hover Action Indicator */}
-            <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-              <motion.span 
-                initial={{ scale: 0.9, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: false }}
-                className="btn btn-sm btn-neutral backdrop-blur-sm shadow-xl gap-2 text-white"
+          <div>
+            <div className="flex items-center justify-between mb-3 px-1">
+              <span className="text-xs uppercase tracking-wider text-neutral-400 font-bold flex items-center gap-2">
+                <Dumbbell className="w-4 h-4 text-red-500" />
+                Exercise Infographic Demonstration
+              </span>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsImageLightboxOpen(true)}
+                className="btn btn-ghost btn-xs gap-1.5 text-neutral-400 hover:text-white"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
-                Tap to expand fullscreen
-              </motion.span>
+                <span>Full View</span>
+              </motion.button>
+            </div>
+
+            <div 
+              onClick={() => setIsImageLightboxOpen(true)}
+              className="card relative rounded-3xl overflow-hidden bg-neutral-950 cursor-pointer group shadow-2xl flex items-center justify-center border border-white/5"
+            >
+              {/* Red/black cinematic reveal overlay that slides across on scroll */}
+              <motion.div
+                initial={{ x: "0%" }}
+                whileInView={{ x: "100%" }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.85, ease: CINEMATIC_EASE }}
+                className="absolute inset-0 z-20 bg-gradient-to-r from-red-950 via-black to-black pointer-events-none"
+              />
+
+              {/* Parallax Image */}
+              <motion.img
+                style={{ y: imageParallaxY }}
+                initial={{ scale: 1.08 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.95, ease: CINEMATIC_EASE }}
+                src={exercise.demoImage}
+                alt={`${exercise.title} Demonstration`}
+                className="w-full object-contain max-h-[620px] transition-transform duration-500 group-hover:scale-[1.01]"
+              />
+
+              {/* Hover Action Indicator */}
+              <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                <motion.span 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: false }}
+                  className="btn btn-sm btn-neutral backdrop-blur-sm shadow-xl gap-2 text-white"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  Tap to expand fullscreen
+                </motion.span>
+              </div>
             </div>
           </div>
+
+          {/* Start & Finish Position Form Cards (If Available) */}
+          {exercise.startPositionImage && exercise.finishPositionImage && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Start Position Card */}
+              <div className="card rounded-2xl bg-neutral-950/80 border border-white/[0.08] p-3 overflow-hidden shadow-lg group hover:border-red-500/40 transition-colors">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] font-bold text-neutral-300 uppercase tracking-wider">
+                    <span className="w-2 h-2 rounded-full bg-neutral-400" />
+                    Start Position (Setup)
+                  </span>
+                  <span className="text-[10px] text-neutral-500 font-mono">STEP 01</span>
+                </div>
+                <div className="relative rounded-xl overflow-hidden bg-black/50 aspect-square flex items-center justify-center border border-white/5">
+                  <img 
+                    src={exercise.startPositionImage} 
+                    alt={`${exercise.title} Start Position`}
+                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              </div>
+
+              {/* Finish Position Card */}
+              <div className="card rounded-2xl bg-neutral-950/80 border border-red-500/20 p-3 overflow-hidden shadow-lg group hover:border-red-500/50 transition-colors">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-950/80 border border-red-500/50 text-[11px] font-bold text-red-300 uppercase tracking-wider shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    Finish Position (Peak Squeeze)
+                  </span>
+                  <span className="text-[10px] text-red-400 font-mono">STEP 02</span>
+                </div>
+                <div className="relative rounded-xl overflow-hidden bg-black/50 aspect-square flex items-center justify-center border border-white/5">
+                  <img 
+                    src={exercise.finishPositionImage} 
+                    alt={`${exercise.title} Finish Position`}
+                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </motion.div>
       )}
 
@@ -487,8 +715,9 @@ export default function ExerciseDetailView({
                 {exercise.primaryMuscles.map((muscle) => (
                   <span 
                     key={muscle}
-                    className="badge badge-neutral text-white text-xs font-semibold py-3"
+                    className="badge bg-red-950/70 border border-red-500/40 text-red-200 font-semibold text-xs py-3 shadow-[0_0_12px_rgba(239,68,68,0.25)] flex items-center gap-1.5"
                   >
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                     {muscle}
                   </span>
                 ))}

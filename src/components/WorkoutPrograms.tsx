@@ -6,8 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   WORKOUT_DAYS, 
   Exercise, 
-  WorkoutDay 
+  WorkoutDay,
+  PRE_WORKOUT_STRETCHES,
+  POST_WORKOUT_STRETCHES 
 } from "@/data/workoutData";
+import CardioBlock from "@/components/CardioBlock";
+import StretchingSection from "@/components/StretchingSection";
+import FinisherRoutine from "@/components/FinisherRoutine";
+import MonthScheduleView from "@/components/MonthScheduleView";
+import { playTimerSound } from "@/utils/sound";
 import { 
   Flame, 
   Clock, 
@@ -35,7 +42,8 @@ import {
   Timer,
   Lightbulb,
   ExternalLink,
-  BookOpen
+  BookOpen,
+  Calendar
 } from "lucide-react";
 
 // Interactive Rest Timer Floating Bar Component (DaisyUI styled)
@@ -53,13 +61,18 @@ export const RestTimer = ({
   const [timeLeft, setTimeLeft] = useState(seconds);
   const [isRunning, setIsRunning] = useState(true);
 
-  // Synchronize when seconds changes
+  // Synchronize when seconds changes & play start chime
   const [prevSeconds, setPrevSeconds] = useState(seconds);
   if (prevSeconds !== seconds) {
     setPrevSeconds(seconds);
     setTimeLeft(seconds);
     setIsRunning(true);
+    playTimerSound("start");
   }
+
+  useEffect(() => {
+    playTimerSound("start");
+  }, []);
 
   // Keyboard accessibility: Escape key dismisses timer
   useEffect(() => {
@@ -75,22 +88,7 @@ export const RestTimer = ({
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          try {
-            const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-            if (AudioContextClass) {
-              const ctx = new AudioContextClass();
-              const osc = ctx.createOscillator();
-              const gain = ctx.createGain();
-              osc.connect(gain);
-              gain.connect(ctx.destination);
-              osc.frequency.setValueAtTime(880, ctx.currentTime);
-              gain.gain.setValueAtTime(0.2, ctx.currentTime);
-              osc.start();
-              osc.stop(ctx.currentTime + 0.3);
-            }
-          } catch {
-            // Audio context fallback
-          }
+          playTimerSound("complete");
           return 0;
         }
         return prev - 1;
@@ -148,13 +146,20 @@ export const RestTimer = ({
       <div className="flex items-center justify-between gap-2 pt-2 border-t border-neutral-800">
         <div className="flex gap-2">
           <button 
-            onClick={() => setIsRunning(!isRunning)}
+            onClick={() => {
+              if (!isRunning) playTimerSound("start");
+              setIsRunning(!isRunning);
+            }}
             className="btn btn-sm btn-neutral text-xs"
           >
             {isRunning ? <><Pause className="w-3.5 h-3.5" /> Pause</> : <><Play className="w-3.5 h-3.5" /> Resume</>}
           </button>
           <button 
-            onClick={() => { setTimeLeft(seconds); setIsRunning(true); }}
+            onClick={() => { 
+              playTimerSound("start");
+              setTimeLeft(seconds); 
+              setIsRunning(true); 
+            }}
             className="btn btn-sm btn-ghost btn-circle text-xs text-neutral-300"
             title="Reset timer"
           >
@@ -340,12 +345,32 @@ export const ExerciseGuideModal = ({
 
 // Main Workout Programs Component
 export default function WorkoutPrograms() {
-  const [selectedDay, setSelectedDay] = useState<"leg-day" | "arm-day">("leg-day");
+  const [selectedDay, setSelectedDay] = useState<WorkoutDay["id"]>("chest-day");
+  const [workoutIndex, setWorkoutIndex] = useState<number>(1);
+  const [viewMode, setViewMode] = useState<"daily" | "month">("daily");
   const [collapsedExercises, setCollapsedExercises] = useState<Record<string, boolean>>({});
   const [activeTimer, setActiveTimer] = useState<{ seconds: number; exerciseName: string; setNumber: number } | null>(null);
   const [activeModalExercise, setActiveModalExercise] = useState<Exercise | null>(null);
   const [completedSets, setCompletedSets] = useState<Record<string, boolean>>({});
   const [filterType, setFilterType] = useState<"all" | "machine" | "freeweight">("all");
+
+  const handleSelectDay = (dayId: WorkoutDay["id"], customWorkoutIndex?: number) => {
+    setSelectedDay(dayId);
+    if (customWorkoutIndex) {
+      setWorkoutIndex(customWorkoutIndex);
+    } else {
+      const dayMap: Record<string, number> = {
+        "chest-day": 1,
+        "back-day": 2,
+        "shoulder-day": 3,
+        "leg-day": 4,
+        "arm-day": 5
+      };
+      if (dayMap[dayId]) {
+        setWorkoutIndex(dayMap[dayId]);
+      }
+    }
+  };
   
   // Custom dropdown states
   const [openDayDropdown, setOpenDayDropdown] = useState(false);
@@ -474,25 +499,81 @@ export default function WorkoutPrograms() {
           </p>
         </div>
 
-        {/* Coach Evan's Core Rule Card (DaisyUI Alert/Card) */}
-        <div className="card max-w-3xl mx-auto mb-10 bg-neutral-900 border border-neutral-800 shadow-2xl p-5 sm:p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 mt-0.5">
-              <Lightbulb className="w-5 h-5 text-red-500" />
-            </div>
-            <div className="flex-grow">
-              <div className="badge badge-error badge-sm uppercase tracking-wider font-bold mb-1">
-                Coach Evan&apos;s Weight Rule
-              </div>
-              <p className="text-base sm:text-lg font-bold text-white leading-snug">
-                &quot;Make sure your weight is heavy enough so the last rep of each set feels difficult.&quot;
-              </p>
-              <p className="text-xs text-neutral-400 mt-1">
-                If the last repetition feels too easy, increase the weight on your next set.
-              </p>
-            </div>
+        {/* View Mode Switcher: Today's Workout Protocol vs Full 28-Day Month Schedule */}
+        <div className="flex items-center justify-center gap-2 mb-10">
+          <div className="join bg-neutral-950 p-1.5 rounded-2xl border border-neutral-800 shadow-xl">
+            <button
+              onClick={() => {
+                playTimerSound("select");
+                setViewMode("daily");
+              }}
+              className={`join-item btn btn-sm font-bold uppercase tracking-wider text-xs gap-2 ${
+                viewMode === "daily" 
+                  ? "btn-error text-white font-extrabold shadow-lg shadow-red-950/50" 
+                  : "btn-ghost text-neutral-400 hover:text-white"
+              }`}
+            >
+              <Dumbbell className="w-3.5 h-3.5" />
+              <span>Today&apos;s Workout Protocol</span>
+            </button>
+            <button
+              onClick={() => {
+                playTimerSound("select");
+                setViewMode("month");
+              }}
+              className={`join-item btn btn-sm font-bold uppercase tracking-wider text-xs gap-2 ${
+                viewMode === "month" 
+                  ? "btn-error text-white font-extrabold shadow-lg shadow-red-950/50" 
+                  : "btn-ghost text-neutral-400 hover:text-white"
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Full 28-Day Month Schedule</span>
+            </button>
           </div>
         </div>
+
+        {viewMode === "month" ? (
+          <MonthScheduleView
+            currentDayId={selectedDay}
+            onSelectDay={(dayId, num) => {
+              playTimerSound("select");
+              handleSelectDay(dayId, num);
+              setViewMode("daily");
+            }}
+          />
+        ) : (
+          <>
+            {/* Coach Evan's Core Rule Card (DaisyUI Alert/Card) */}
+            <div className="card max-w-3xl mx-auto mb-10 bg-neutral-900 border border-neutral-800 shadow-2xl p-5 sm:p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 mt-0.5">
+                  <Lightbulb className="w-5 h-5 text-red-500" />
+                </div>
+                <div className="flex-grow">
+                  <div className="badge badge-error badge-sm uppercase tracking-wider font-bold mb-1">
+                    Coach Evan&apos;s Weight Rule
+                  </div>
+                  <p className="text-base sm:text-lg font-bold text-white leading-snug">
+                    &quot;Make sure your weight is heavy enough so the last rep of each set feels difficult.&quot;
+                  </p>
+                  <p className="text-xs text-neutral-400 mt-1">
+                    If the last repetition feels too easy, increase the weight on your next set.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 1: Pre-Workout Dynamic Mobility (Warm-Up) */}
+            <div className="mb-8">
+              <StretchingSection
+                title="Phase 01: Pre-Workout Dynamic Mobility & Warm-Up"
+                subtitle="Lubricate joints, elevate core body temperature, and prime motor pathways before heavy load."
+                badge="Phase 01: Warm-Up"
+                phase="pre"
+                stretches={PRE_WORKOUT_STRETCHES}
+              />
+            </div>
 
         {/* Workout Control Bar: Split Selector, Jump & Filter (DaisyUI Styled) */}
         <div className="card bg-neutral-900/80 border border-neutral-800 p-4 sm:p-5 mb-8 space-y-4 shadow-xl">
@@ -550,7 +631,8 @@ export default function WorkoutPrograms() {
                         <button
                           key={day.id}
                           onClick={() => {
-                            setSelectedDay(day.id);
+                            playTimerSound("select");
+                            handleSelectDay(day.id);
                             setOpenDayDropdown(false);
                           }}
                           className={`btn btn-sm w-full justify-between text-left text-xs ${
@@ -668,7 +750,10 @@ export default function WorkoutPrograms() {
               return (
                 <button
                   key={day.id}
-                  onClick={() => setSelectedDay(day.id)}
+                  onClick={() => {
+                    playTimerSound("select");
+                    handleSelectDay(day.id);
+                  }}
                   className={`btn join-item btn-sm font-semibold uppercase tracking-wider flex-1 sm:flex-initial ${
                     isActive ? "btn-error text-white" : "btn-neutral text-neutral-400 hover:text-white"
                   }`}
@@ -844,7 +929,10 @@ export default function WorkoutPrograms() {
                               return (
                                 <div 
                                   key={set.setNumber}
-                                  onClick={() => toggleSetCompleted(exercise.id, set.setNumber)}
+                                  onClick={() => {
+                                    playTimerSound("click");
+                                    toggleSetCompleted(exercise.id, set.setNumber);
+                                  }}
                                   className={`card cursor-pointer p-3.5 border transition-all ${
                                     isCompleted 
                                       ? "bg-emerald-950/20 border-emerald-600/40" 
@@ -883,6 +971,7 @@ export default function WorkoutPrograms() {
                                       type="button"
                                       onClick={(e) => {
                                         e.stopPropagation();
+                                        playTimerSound("start");
                                         setActiveTimer({
                                           seconds: set.restSeconds,
                                           exerciseName: exercise.title,
@@ -909,6 +998,7 @@ export default function WorkoutPrograms() {
                             <button
                               type="button"
                               onClick={() => {
+                                playTimerSound("start");
                                 setActiveTimer({
                                   seconds: exercise.betweenExerciseRest,
                                   exerciseName: `Transition: ${exercise.title}`,
@@ -931,7 +1021,39 @@ export default function WorkoutPrograms() {
           })}
         </div>
 
-      </div>
+        {/* Phase 3: Dedicated Core / Calf Raises Routine (Alternates Every Workout Day) */}
+        <div className="mt-12">
+          <FinisherRoutine 
+            workoutIndex={workoutIndex} 
+            onStartRestTimer={(sec, name) => {
+              playTimerSound("start");
+              setActiveTimer({
+                seconds: sec,
+                exerciseName: name,
+                setNumber: 0
+              });
+            }}
+          />
+        </div>
+
+        {/* Phase 4: 20-Minute Post-Lift Cardio (Required Every Workout Day) */}
+        <div className="mt-8">
+          <CardioBlock />
+        </div>
+
+        {/* Phase 5: Post-Workout Static Flexibility (Cool-Down) */}
+        <div className="mt-8">
+          <StretchingSection
+            title="Phase 05: Post-Workout Static Flexibility & Cool-Down"
+            subtitle="Deep elongation of worked muscles, fascial decompression, and CNS recovery."
+            badge="Phase 05: Cool-Down"
+            phase="post"
+            stretches={POST_WORKOUT_STRETCHES}
+          />
+        </div>
+      </>
+    )}
+  </div>
 
       {/* Floating Rest Timer */}
       <AnimatePresence>
