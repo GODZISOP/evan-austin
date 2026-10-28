@@ -535,7 +535,7 @@ export default function Navbar() {
 
                       {/* Exercises mobile list */}
                       <div className="grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto pr-1">
-                        {currentDayData.exercises.map((exercise) => (
+                        {exercisesToDisplay.map((exercise) => (
                           <Link
                             key={exercise.id}
                             href={`/workouts/${exercise.slug}`}
