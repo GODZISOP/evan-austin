@@ -109,7 +109,7 @@ export interface ScheduledWorkoutDay {
   workoutNumber: number; // 1 to 28
   dayOfWeek: string;
   dayName: string;
-  splitId: "chest-day" | "back-day" | "shoulder-day" | "leg-day" | "arm-day" | "rest";
+  splitId: WorkoutDay["id"] | "rest";
   splitName: string;
   focus: string;
   coreOrCalf: "abs" | "calves" | "none";
