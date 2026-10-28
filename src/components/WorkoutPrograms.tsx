@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   WORKOUT_DAYS, 
+  ALL_WORKOUT_DAYS,
   Exercise, 
   WorkoutDay,
   PRE_WORKOUT_STRETCHES,
@@ -364,13 +365,30 @@ export default function WorkoutPrograms() {
         "back-day": 2,
         "shoulder-day": 3,
         "leg-day": 4,
-        "arm-day": 5
+        "arm-day": 5,
+        "abs": 1,
+        "calves": 2
       };
       if (dayMap[dayId]) {
         setWorkoutIndex(dayMap[dayId]);
       }
     }
   };
+
+  // URL Hash listener to directly jump to Abs or Calves
+  useEffect(() => {
+    const checkHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash.includes("calves")) {
+        setSelectedDay("calves" as any);
+      } else if (hash.includes("abs")) {
+        setSelectedDay("abs" as any);
+      }
+    };
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+    return () => window.removeEventListener("hashchange", checkHash);
+  }, []);
   
   // Custom dropdown states
   const [openDayDropdown, setOpenDayDropdown] = useState(false);
@@ -410,7 +428,7 @@ export default function WorkoutPrograms() {
     };
   }, []);
 
-  const currentWorkout = WORKOUT_DAYS.find((d) => d.id === selectedDay) || WORKOUT_DAYS[0];
+  const currentWorkout = ALL_WORKOUT_DAYS.find((d) => d.id === selectedDay) || ALL_WORKOUT_DAYS[0];
 
   const toggleExerciseCollapse = (exerciseId: string) => {
     setCollapsedExercises((prev) => ({
@@ -625,7 +643,7 @@ export default function WorkoutPrograms() {
                     exit={{ opacity: 0, y: 6 }}
                     className="card absolute top-full left-0 mt-2 w-full z-50 bg-neutral-900 border border-neutral-700 shadow-2xl p-2 space-y-1"
                   >
-                    {WORKOUT_DAYS.map((day) => {
+                    {ALL_WORKOUT_DAYS.map((day) => {
                       const isSelected = selectedDay === day.id;
                       return (
                         <button
@@ -744,8 +762,8 @@ export default function WorkoutPrograms() {
 
         {/* Day Selector Buttons & Session Progress (DaisyUI Join & Progress) */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-neutral-800">
-          <div className="join w-full sm:w-auto">
-            {WORKOUT_DAYS.map((day) => {
+          <div className="join w-full sm:w-auto flex-wrap">
+            {ALL_WORKOUT_DAYS.map((day) => {
               const isActive = selectedDay === day.id;
               return (
                 <button
@@ -1022,7 +1040,7 @@ export default function WorkoutPrograms() {
         </div>
 
         {/* Phase 3: Dedicated Core / Calf Raises Routine (Alternates Every Workout Day) */}
-        <div className="mt-12">
+        <div className="mt-12" id="finisher-section">
           <FinisherRoutine 
             workoutIndex={workoutIndex} 
             onStartRestTimer={(sec, name) => {

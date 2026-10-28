@@ -19,7 +19,7 @@ import {
   HeartPulse
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { WORKOUT_DAYS } from "@/data/workoutData";
+import { WORKOUT_DAYS, ABS_ROUTINE, CALVES_ROUTINE } from "@/data/workoutData";
 import { playTimerSound } from "@/utils/sound";
 
 export default function Navbar() {
@@ -78,12 +78,34 @@ export default function Navbar() {
 
   const currentDayData = WORKOUT_DAYS.find(d => d.id === activeDay) || WORKOUT_DAYS[0];
 
+  const exercisesToDisplay = activeDay === "abs" 
+    ? ABS_ROUTINE.exercises.map(e => ({
+        id: e.id,
+        title: e.name,
+        slug: e.slug,
+        primaryMuscles: [e.targetMuscle],
+        sets: Array.from({ length: e.sets }),
+        demoImage: e.demoImage || e.image,
+      }))
+    : activeDay === "calves"
+    ? CALVES_ROUTINE.exercises.map(e => ({
+        id: e.id,
+        title: e.name,
+        slug: e.slug,
+        primaryMuscles: [e.targetMuscle],
+        sets: Array.from({ length: e.sets }),
+        demoImage: e.demoImage || e.image,
+      }))
+    : currentDayData.exercises;
+
   const dayIcons: Record<string, React.ReactNode> = {
     "chest-day": <Flame className="w-3.5 h-3.5" />,
     "back-day": <Layers className="w-3.5 h-3.5" />,
     "shoulder-day": <Target className="w-3.5 h-3.5" />,
     "leg-day": <Activity className="w-3.5 h-3.5" />,
     "arm-day": <Dumbbell className="w-3.5 h-3.5" />,
+    "abs": <Sparkles className="w-3.5 h-3.5 text-red-500" />,
+    "calves": <Flame className="w-3.5 h-3.5 text-red-500" />,
   };
 
   return (
@@ -172,7 +194,7 @@ export default function Navbar() {
                     </Link>
                   </div>
 
-                  {/* Day Tab Switcher - All 5 Days */}
+                  {/* Day Tab Switcher - All 5 Days + Abs + Calves */}
                   <div className="flex border-b border-white/8 bg-neutral-950/60 overflow-x-auto">
                     {WORKOUT_DAYS.map((day) => (
                       <button
@@ -181,7 +203,7 @@ export default function Navbar() {
                           playTimerSound("select");
                           setActiveDay(day.id);
                         }}
-                        className={`flex-1 min-w-[110px] flex items-center justify-center gap-1.5 py-2.5 px-2 text-[10px] font-mono uppercase tracking-wider font-bold transition-all ${
+                        className={`flex-1 min-w-[95px] flex items-center justify-center gap-1.5 py-2.5 px-2 text-[10px] font-mono uppercase tracking-wider font-bold transition-all ${
                           activeDay === day.id
                             ? "text-red-500 bg-red-600/10 border-b-2 border-red-500"
                             : "text-neutral-500 hover:text-neutral-300"
@@ -192,12 +214,42 @@ export default function Navbar() {
                         <span className="text-[9px] opacity-60">({day.totalExercises})</span>
                       </button>
                     ))}
+                    <button
+                      onClick={() => {
+                        playTimerSound("select");
+                        setActiveDay("abs");
+                      }}
+                      className={`flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 px-2 text-[10px] font-mono uppercase tracking-wider font-bold transition-all ${
+                        activeDay === "abs"
+                          ? "text-red-500 bg-red-600/10 border-b-2 border-red-500"
+                          : "text-neutral-500 hover:text-neutral-300"
+                      }`}
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-red-500" />
+                      <span>Abs</span>
+                      <span className="text-[9px] opacity-60">(5)</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        playTimerSound("select");
+                        setActiveDay("calves");
+                      }}
+                      className={`flex-1 min-w-[85px] flex items-center justify-center gap-1.5 py-2.5 px-2 text-[10px] font-mono uppercase tracking-wider font-bold transition-all ${
+                        activeDay === "calves"
+                          ? "text-red-500 bg-red-600/10 border-b-2 border-red-500"
+                          : "text-neutral-500 hover:text-neutral-300"
+                      }`}
+                    >
+                      <Flame className="w-3.5 h-3.5 text-red-500" />
+                      <span>Calves</span>
+                      <span className="text-[9px] opacity-60">(2)</span>
+                    </button>
                   </div>
 
                   {/* Exercise Grid */}
                   <div className="p-4 max-h-[380px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
                     <div className="grid grid-cols-2 gap-2.5">
-                      {currentDayData.exercises.map((exercise, i) => (
+                      {exercisesToDisplay.map((exercise, i) => (
                         <motion.div
                           key={exercise.id}
                           initial={{ opacity: 0, y: 8 }}
@@ -205,7 +257,7 @@ export default function Navbar() {
                           transition={{ delay: i * 0.03, duration: 0.18 }}
                         >
                           <Link
-                            href={`/workouts/${exercise.slug}`}
+                            href={exercise.slug.startsWith("programs") ? `/${exercise.slug}` : `/workouts/${exercise.slug}`}
                             onClick={() => {
                               playTimerSound("select");
                               setProgramsDropdownOpen(false);
@@ -253,15 +305,26 @@ export default function Navbar() {
 
                   {/* Program Features Strip Mention */}
                   <div className="px-4 py-2.5 bg-neutral-950 border-t border-white/8 grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
-                    <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
-                      <div className="text-amber-400 font-bold">ABS / CALVES</div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playTimerSound("select");
+                        setActiveDay(activeDay === "abs" ? "calves" : "abs");
+                      }}
+                      className={`p-1.5 rounded-lg border transition-all text-left ${
+                        activeDay === "abs" || activeDay === "calves"
+                          ? "bg-red-600/10 border-red-500/40"
+                          : "bg-white/[0.03] border-white/5 hover:bg-white/[0.06]"
+                      }`}
+                    >
+                      <div className="text-red-400 font-bold">ABS / CALVES</div>
                       <div className="text-[9px] text-neutral-500">Alternating Daily</div>
-                    </div>
-                    <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
+                    </button>
+                    <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300 text-left">
                       <div className="text-red-400 font-bold">20M CARDIO</div>
                       <div className="text-[9px] text-neutral-500">StairMaster Daily</div>
                     </div>
-                    <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
+                    <div className="p-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300 text-left">
                       <div className="text-cyan-400 font-bold">STRETCHES</div>
                       <div className="text-[9px] text-neutral-500">Pre & Post Stretches</div>
                     </div>
@@ -420,11 +483,50 @@ export default function Navbar() {
                             <span className="truncate">{day.name.replace(" Day", "")}</span>
                           </button>
                         ))}
+                        <button
+                          onClick={() => {
+                            playTimerSound("select");
+                            setActiveDay("abs");
+                          }}
+                          className={`py-2 px-2 rounded-lg text-[10px] font-mono uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1 ${
+                            activeDay === "abs"
+                              ? "bg-red-600 text-white"
+                              : "bg-white/5 text-neutral-400 hover:text-white"
+                          }`}
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          <span>Abs (5)</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            playTimerSound("select");
+                            setActiveDay("calves");
+                          }}
+                          className={`py-2 px-2 rounded-lg text-[10px] font-mono uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1 ${
+                            activeDay === "calves"
+                              ? "bg-red-600 text-white"
+                              : "bg-white/5 text-neutral-400 hover:text-white"
+                          }`}
+                        >
+                          <Flame className="w-3 h-3" />
+                          <span>Calves (2)</span>
+                        </button>
                       </div>
 
                       {/* Mobile Added Features Badge */}
                       <div className="mb-3 p-2 rounded-xl bg-white/[0.03] border border-white/8 flex items-center justify-around text-[10px] font-mono text-neutral-300">
-                        <span className="text-amber-400 font-bold">Abs/Calves</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            playTimerSound("select");
+                            setActiveDay(activeDay === "abs" ? "calves" : "abs");
+                          }}
+                          className={`font-bold transition-colors ${
+                            activeDay === "abs" || activeDay === "calves" ? "text-red-500 underline" : "text-red-400"
+                          }`}
+                        >
+                          Abs/Calves
+                        </button>
                         <span className="text-neutral-500">•</span>
                         <span className="text-red-400 font-bold">20m Cardio</span>
                         <span className="text-neutral-500">•</span>

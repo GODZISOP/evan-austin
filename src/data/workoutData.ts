@@ -9,7 +9,7 @@ export interface ExerciseSet {
 export interface Exercise {
   id: string;
   slug: string;
-  dayId: "leg-day" | "arm-day" | "chest-day" | "back-day" | "shoulder-day";
+  dayId: "leg-day" | "arm-day" | "chest-day" | "back-day" | "shoulder-day" | "abs" | "calves";
   dayName: string;
   title: string;
   subtitle: string;
@@ -31,7 +31,7 @@ export interface Exercise {
 }
 
 export interface WorkoutDay {
-  id: "leg-day" | "arm-day" | "chest-day" | "back-day" | "shoulder-day";
+  id: "leg-day" | "arm-day" | "chest-day" | "back-day" | "shoulder-day" | "abs" | "calves";
   slug: string;
   name: string;
   tagline: string;
@@ -65,6 +65,36 @@ export interface CardioProtocol {
   targetHeartRateZone: string;
 }
 
+export interface FinisherSetDetail {
+  setNumber: number;
+  reps: string;
+  restSeconds: number;
+  notes?: string;
+}
+
+export interface FinisherExercise {
+  id: string;
+  slug: string;
+  sequenceNumber: number;
+  name: string;
+  title: string;
+  subtitle: string;
+  primaryMuscles: string[];
+  secondaryMuscles?: string[];
+  equipment: string;
+  targetMuscle: string;
+  sets: number;
+  reps: string;
+  restSeconds: number;
+  betweenExerciseRest: number; // rest in seconds before next exercise
+  image: string;
+  demoImage: string;
+  cue: string;
+  generalFormCue: string;
+  notes: string;
+  setDetails: FinisherSetDetail[];
+}
+
 export interface FinisherRoutine {
   type: "abs" | "calves";
   title: string;
@@ -72,16 +102,7 @@ export interface FinisherRoutine {
   tagline: string;
   description: string;
   frequencyRule: string;
-  exercises: {
-    id: string;
-    name: string;
-    targetMuscle: string;
-    sets: number;
-    reps: string;
-    restSeconds: number;
-    cue: string;
-    notes: string;
-  }[];
+  exercises: FinisherExercise[];
 }
 
 export interface ScheduledWorkoutDay {
@@ -1300,39 +1321,139 @@ export const ABS_ROUTINE: FinisherRoutine = {
   type: "abs",
   title: "Dedicated Abs Protocol",
   badge: "Core Hypertrophy",
-  tagline: "Trunk stability, deep rectus abdominis, and serratus development",
-  description: "Performs on alternating workout days (Day 1, Day 3, Day 5, etc.). High focus on abdominal flexion under controlled tension rather than neck pull.",
+  tagline: "Sequential abdominal routine: Bent Knee Crunches → Crunches → Leg Lifts → Bicycle Crunches → Cable AB Pull Down",
+  description: "Performed on alternating workout days (Day 1, Day 3, Day 5, etc.). Follow the exact sequence with prescribed set rests and 60-second transitions between exercises.",
   frequencyRule: "Alternates with Calves across workout days (Day 1 = Abs, Day 2 = Calves, Day 3 = Abs, Day 4 = Calves)",
   exercises: [
     {
-      id: "hanging-leg-raises",
-      name: "Hanging or Captain's Chair Leg Raises",
-      targetMuscle: "Lower Abdominals & Hip Flexors",
+      id: "bent-knee-crunches",
+      slug: "bent-knee-crunches",
+      sequenceNumber: 1,
+      name: "Bent Knee Crunches",
+      title: "Bent Knee Crunches",
+      subtitle: "Upper & Mid Abdominal Wall Flexion",
+      primaryMuscles: ["Rectus Abdominis (Upper/Mid)"],
+      secondaryMuscles: ["Obliques"],
+      equipment: "Floor Mat / Bodyweight",
+      targetMuscle: "Upper & Mid Rectus Abdominis",
       sets: 3,
-      reps: "12 - 15 Reps",
-      restSeconds: 45,
-      cue: "Roll your pelvis upward toward your sternum; don't just swing your legs with momentum.",
-      notes: "Can be done on a pull-up bar hanging or in the captain's chair with forearm supports."
+      reps: "20 - 30 Reps",
+      restSeconds: 30,
+      betweenExerciseRest: 60,
+      image: "/images/exercises/bent-knee-crunches.jpg",
+      demoImage: "/images/exercises/bent-knee-crunches.jpg",
+      cue: "Keep knees bent at 90 degrees with feet flat or elevated. Curl your shoulders off the floor strictly flexing your abs without pulling your neck.",
+      generalFormCue: "Keep knees bent at 90 degrees with feet flat or elevated. Curl your shoulders off the floor strictly flexing your abs without pulling your neck.",
+      notes: "Set 1 (20-30 reps, 30s rest), Set 2 (20-30 reps, 30s rest), Set 3 (20-30 reps). Rest 60s before transitioning to Crunches.",
+      setDetails: [
+        { setNumber: 1, reps: "20-30 Reps", restSeconds: 30, notes: "Strict abdominal flexion, 30s rest" },
+        { setNumber: 2, reps: "20-30 Reps", restSeconds: 30, notes: "Maintain rhythmic speed, 30s rest" },
+        { setNumber: 3, reps: "20-30 Reps", restSeconds: 60, notes: "Burnout to fatigue, 60s transition rest to Crunches" },
+      ]
     },
     {
-      id: "kneeling-cable-crunch",
-      name: "Kneeling Cable Crunches",
-      targetMuscle: "Rectus Abdominis (Upper & Mid Core)",
+      id: "crunches",
+      slug: "crunches",
+      sequenceNumber: 2,
+      name: "Crunches",
+      title: "Crunches",
+      subtitle: "Upper Abdominal Wall Isolation & Peak Squeeze",
+      primaryMuscles: ["Rectus Abdominis (Upper)"],
+      secondaryMuscles: ["Transverse Abdominis"],
+      equipment: "Floor Mat / Bodyweight",
+      targetMuscle: "Upper Abdominal Wall",
+      sets: 3,
+      reps: "20 - 30 Reps",
+      restSeconds: 45,
+      betweenExerciseRest: 60,
+      image: "/images/exercises/crunches.jpg",
+      demoImage: "/images/exercises/crunches.jpg",
+      cue: "Focus on pulling your ribcage straight toward your pelvis. Exhale forcefully on the squeeze and control the negative descent.",
+      generalFormCue: "Focus on pulling your ribcage straight toward your pelvis. Exhale forcefully on the squeeze and control the negative descent.",
+      notes: "Set 1 (20-30 reps, 45s rest), Set 2 (20-30 reps, 45s rest), Set 3 (20-30 reps). Rest 60s before Leg Lifts on Floor.",
+      setDetails: [
+        { setNumber: 1, reps: "20-30 Reps", restSeconds: 45, notes: "Full compression at peak contraction, 45s rest" },
+        { setNumber: 2, reps: "20-30 Reps", restSeconds: 45, notes: "Exhale on every curl, 45s rest" },
+        { setNumber: 3, reps: "20-30 Reps", restSeconds: 60, notes: "Final peak pump, 60s transition rest to Leg Lifts" },
+      ]
+    },
+    {
+      id: "leg-lifts-floor",
+      slug: "leg-lifts-floor",
+      sequenceNumber: 3,
+      name: "Leg Lifts on Floor",
+      title: "Leg Lifts on Floor",
+      subtitle: "Lower Abdominals & Core Anti-Extension Stability",
+      primaryMuscles: ["Lower Rectus Abdominis"],
+      secondaryMuscles: ["Hip Flexors", "Transverse Abdominis"],
+      equipment: "Floor Mat / Bodyweight",
+      targetMuscle: "Lower Abdominals & Core Stabilizers",
       sets: 3,
       reps: "15 - 20 Reps",
-      restSeconds: 45,
-      cue: "Hold rope handles by your ears. Curl your ribcage down toward your knees like a shrimp.",
-      notes: "Keep your hips high and still; isolate movement to the spine curling."
+      restSeconds: 30,
+      betweenExerciseRest: 60,
+      image: "/images/exercises/leg-lifts-floor.jpg",
+      demoImage: "/images/exercises/leg-lifts-floor.jpg",
+      cue: "Lie flat on the floor, press your lower back firmly into the mat. Raise legs smoothly and lower under control without arching your spine.",
+      generalFormCue: "Lie flat on the floor, press your lower back firmly into the mat. Raise legs smoothly and lower under control without arching your spine.",
+      notes: "Set 1 (15-20 reps, 30s rest), Set 2 (15-20 reps, 30s rest), Set 3 (15-20 reps). Rest 60s before Bicycle Crunches.",
+      setDetails: [
+        { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Lower back glued to mat, 30s rest" },
+        { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Control the eccentric descent, 30s rest" },
+        { setNumber: 3, reps: "15-20 Reps", restSeconds: 60, notes: "Max reps to lower ab burn, 60s transition rest to Bicycle Crunches" },
+      ]
     },
     {
-      id: "ab-wheel-rollouts",
-      name: "Ab Wheel Rollouts / Weighted Plank",
-      targetMuscle: "Transverse Abdominis & Deep Core Wall",
+      id: "bicycle-crunches",
+      slug: "bicycle-crunches",
+      sequenceNumber: 4,
+      name: "Bicycle Crunches",
+      title: "Bicycle Crunches",
+      subtitle: "Obliques & Rotational Core Kinetic Chain",
+      primaryMuscles: ["External & Internal Obliques"],
+      secondaryMuscles: ["Rectus Abdominis"],
+      equipment: "Floor Mat / Bodyweight",
+      targetMuscle: "Obliques & Rotational Core",
       sets: 3,
-      reps: "10 - 12 Reps or 60s Hold",
+      reps: "30 Reps",
       restSeconds: 45,
-      cue: "Maintain slight posterior pelvic tilt. Roll forward only as far as you can control without sagging back.",
-      notes: "If ab wheel is unavailable, substitute with a 60-second strict front elbow plank."
+      betweenExerciseRest: 60,
+      image: "/images/exercises/bicycle-crunches.jpg",
+      demoImage: "/images/exercises/bicycle-crunches.jpg",
+      cue: "Rotate torso smoothly side to side, bringing opposite elbow to opposite knee while extending the alternate leg. Steady rhythm.",
+      generalFormCue: "Rotate torso smoothly side to side, bringing opposite elbow to opposite knee while extending the alternate leg. Steady rhythm.",
+      notes: "Set 1 (30 reps, 45s rest), Set 2 (30 reps, 45s rest), Set 3 (30 reps). Rest 60s before Cable AB Pull Down.",
+      setDetails: [
+        { setNumber: 1, reps: "30 Reps", restSeconds: 45, notes: "Continuous alternating rotation, 45s rest" },
+        { setNumber: 2, reps: "30 Reps", restSeconds: 45, notes: "Full oblique contraction each rep, 45s rest" },
+        { setNumber: 3, reps: "30 Reps", restSeconds: 60, notes: "30 fast controlled reps, 60s transition rest to Cable Pulldown" },
+      ]
+    },
+    {
+      id: "cable-ab-pull-down",
+      slug: "cable-ab-pull-down",
+      sequenceNumber: 5,
+      name: "Cable AB Pull Down",
+      title: "Cable AB Pull Down",
+      subtitle: "Full Abdominal Wall Under Progressive Resistance",
+      primaryMuscles: ["Rectus Abdominis (Total Wall)"],
+      secondaryMuscles: ["Serratus Anterior", "Obliques"],
+      equipment: "Cable Machine + Rope Attachment",
+      targetMuscle: "Entire Abdominal Wall Under Cable Resistance",
+      sets: 3,
+      reps: "20 - 30 Reps",
+      restSeconds: 45,
+      betweenExerciseRest: 0,
+      image: "/images/exercises/cable-ab-pull-down.jpg",
+      demoImage: "/images/exercises/cable-ab-pull-down.jpg",
+      cue: "Kneel under high cable pulley holding rope at temples. Curl your torso down into your knees through abdominal flexion, not by sitting back on heels.",
+      generalFormCue: "Kneel under high cable pulley holding rope at temples. Curl your torso down into your knees through abdominal flexion, not by sitting back on heels.",
+      notes: "Set 1 (20-30 reps, 45s rest), Set 2 (20-30 reps, 45s rest), Set 3 (20-30 reps). Grand finisher of the core sequence.",
+      setDetails: [
+        { setNumber: 1, reps: "20-30 Reps", restSeconds: 45, notes: "Lock hips in place, isolate ab curl, 45s rest" },
+        { setNumber: 2, reps: "20-30 Reps", restSeconds: 45, notes: "Progressive weight tension, 45s rest" },
+        { setNumber: 3, reps: "20-30 Reps", restSeconds: 45, notes: "Final heavy burn set to total core exhaustion" },
+      ]
     }
   ]
 };
@@ -1344,39 +1465,62 @@ export const CALVES_ROUTINE: FinisherRoutine = {
   type: "calves",
   title: "Dedicated Calf Raises Protocol",
   badge: "Calf Hypertrophy",
-  tagline: "Gastrocnemius and soleus development with deep stretch and peak squeeze",
-  description: "Performs on alternating workout days (Day 2, Day 4, Day 6, etc.). Calves require a full 2-second pause at the bottom stretch to eliminate Achilles tendon rebound.",
+  tagline: "Sequential calf protocol: Calf Exercise w/ Dumbbells (4 sets) → Calf Press w/ Machine (3 sets)",
+  description: "Performed on alternating workout days (Day 2, Day 4, Day 6, etc.). Follow the exact sequence: Calf Exercise w/ Dumbbells (4 sets, 40s rest) → 75-second rest transition → Calf Press w/ Machine (3 sets, 40s rest).",
   frequencyRule: "Alternates with Abs across workout days (Day 1 = Abs, Day 2 = Calves, Day 3 = Abs, Day 4 = Calves)",
   exercises: [
     {
-      id: "standing-calf-raises",
-      name: "Standing Machine Calf Raises",
-      targetMuscle: "Gastrocnemius (Diamond Calf Peak)",
+      id: "calf-exercise-dumbbells",
+      slug: "calf-exercise-dumbbells",
+      sequenceNumber: 1,
+      name: "Calf Exercise w/ Dumbbells",
+      title: "Calf Exercise w/ Dumbbells",
+      subtitle: "Gastrocnemius Lateral & Medial Head Density",
+      primaryMuscles: ["Gastrocnemius (Calf Diamond)"],
+      secondaryMuscles: ["Soleus", "Tibialis"],
+      equipment: "Dumbbells + Elevation Step/Block",
+      targetMuscle: "Gastrocnemius (Medial & Lateral Heads)",
       sets: 4,
       reps: "15 - 20 Reps",
-      restSeconds: 45,
-      cue: "Lower heels deep below platform for 2s pause. Drive up onto big toes and squeeze hard for 1s.",
-      notes: "Zero bouncing. The bottom stretch is where muscle micro-tears stimulate new growth."
+      restSeconds: 40,
+      betweenExerciseRest: 75,
+      image: "/images/exercises/dumbbell-calf-raises.png",
+      demoImage: "/images/exercises/dumbbell-calf-raises.png",
+      cue: "Hold heavy dumbbells at your sides. Stand on the edge of a plate or step. Full stretch at the bottom, explode upward onto big toes, and hold 1s at peak.",
+      generalFormCue: "Hold heavy dumbbells at your sides. Stand on the edge of a plate or step. Full stretch at the bottom, explode upward onto big toes, and hold 1s at peak.",
+      notes: "Set 1 (15-20 reps, 40s rest), Set 2 (15-20 reps, 40s rest), Set 3 (15-20 reps, 40s rest), Set 4 (15-20 reps). 75s rest before transition to machine press.",
+      setDetails: [
+        { setNumber: 1, reps: "15-20 Reps", restSeconds: 40, notes: "Moderate warm-up set, full depth stretch, 40s rest" },
+        { setNumber: 2, reps: "15-20 Reps", restSeconds: 40, notes: "Deep bottom pause, hard squeeze at top, 40s rest" },
+        { setNumber: 3, reps: "15-20 Reps", restSeconds: 40, notes: "Heavy working set under strict control, 40s rest" },
+        { setNumber: 4, reps: "15-20 Reps", restSeconds: 75, notes: "Final heavy failure set. Rest 75s before Calf Press w/ Machine" },
+      ]
     },
     {
-      id: "seated-calf-raises",
-      name: "Seated Calf Raise Machine",
-      targetMuscle: "Soleus (Deep Lower Calf Width)",
+      id: "calf-press-machine",
+      slug: "calf-press-machine",
+      sequenceNumber: 2,
+      name: "Calf Press w/ Machine",
+      title: "Calf Press w/ Machine",
+      subtitle: "Soleus & Gastrocnemius High-Load Hypertrophy",
+      primaryMuscles: ["Soleus (Lower Calf Width)"],
+      secondaryMuscles: ["Gastrocnemius"],
+      equipment: "Leg Press Machine / Seated Calf Machine",
+      targetMuscle: "Soleus & Gastrocnemius Peak Fibers",
       sets: 3,
-      reps: "12 - 15 Reps",
-      restSeconds: 45,
-      cue: "Knees bent at 90 degrees isolate the soleus muscle. Smooth tempo with full range of motion.",
-      notes: "Adjust pad comfortably over lower thighs right above knees."
-    },
-    {
-      id: "single-leg-bodyweight-elevated-raises",
-      name: "Single-Leg Elevated Dumbbell Calf Raise",
-      targetMuscle: "Calf Stabilizers & Unilateral Symmetry",
-      sets: 3,
-      reps: "15 Reps / Leg",
-      restSeconds: 30,
-      cue: "Hold 1 dumbbell in working side hand. Stand on edge of plate or step. Full extension.",
-      notes: "Switch legs with no rest between sides to maintain high metabolic density."
+      reps: "15 - 20 Reps",
+      restSeconds: 40,
+      betweenExerciseRest: 0,
+      image: "/images/exercises/machine-calf-press.png",
+      demoImage: "/images/exercises/machine-calf-press.png",
+      cue: "Place the balls of your feet on the lower edge of the leg press or machine footplate with knees slightly bent. Full Achilles stretch, drive forward through toes.",
+      generalFormCue: "Place the balls of your feet on the lower edge of the leg press or machine footplate with knees slightly bent. Full Achilles stretch, drive forward through toes.",
+      notes: "Set 1 (15-20 reps, 40s rest), Set 2 (15-20 reps, 40s rest), Set 3 (15-20 reps). Finish strong with maximum calf pump.",
+      setDetails: [
+        { setNumber: 1, reps: "15-20 Reps", restSeconds: 40, notes: "2-second stretch pause at bottom, 40s rest" },
+        { setNumber: 2, reps: "15-20 Reps", restSeconds: 40, notes: "Explosive toe press, 1s top contraction, 40s rest" },
+        { setNumber: 3, reps: "15-20 Reps", restSeconds: 40, notes: "Final all-out burn set to mechanical failure" },
+      ]
     }
   ]
 };
@@ -1459,8 +1603,318 @@ export const FULL_MONTH_SCHEDULE = generateMonthWorkoutSchedule(28);
 // -------------------------------------------------------------
 // HELPER QUERY FUNCTIONS
 // -------------------------------------------------------------
+export const ABS_EXERCISES: Exercise[] = [
+  {
+    id: "bent-knee-crunches",
+    slug: "bent-knee-crunches",
+    dayId: "abs",
+    dayName: "Dedicated Abs Protocol",
+    title: "Bent Knee Crunches",
+    subtitle: "Upper & Mid Abdominal Wall Flexion",
+    primaryMuscles: ["Rectus Abdominis (Upper/Mid)"],
+    secondaryMuscles: ["Obliques", "Transverse Abdominis"],
+    equipment: "Floor Mat / Bodyweight",
+    betweenExerciseRest: 60,
+    generalFormCue: "Keep knees bent at 90 degrees with feet flat or elevated. Curl your shoulders off the floor strictly flexing your abs without pulling your neck.",
+    demoImage: "/images/exercises/bent-knee-crunches.jpg",
+    sets: [
+      { setNumber: 1, reps: "20-30 Reps", restSeconds: 30, notes: "Strict abdominal flexion, 30s rest" },
+      { setNumber: 2, reps: "20-30 Reps", restSeconds: 30, notes: "Maintain rhythmic speed, 30s rest" },
+      { setNumber: 3, reps: "20-30 Reps", restSeconds: 60, notes: "Burnout to fatigue, 60s transition rest to Crunches" },
+    ],
+    howToPerform: {
+      setup: [
+        "Lie flat on your back on a gym mat with knees bent at a 90-degree angle and feet planted firmly on the floor or slightly elevated.",
+        "Place your fingertips gently behind your head or cross your hands over your chest. Do not pull on your neck.",
+        "Flatten your lower back firmly into the mat by engaging your core."
+      ],
+      execution: [
+        "Contract your abdominal muscles to lift your shoulder blades and upper back 2 to 3 inches off the ground.",
+        "Pause and forcefully exhale at the top of the contraction for 1 full second.",
+        "Slowly lower back down under control until your shoulder blades lightly graze the mat before beginning the next rep."
+      ],
+      proTips: [
+        "Focus on curling your ribcage directly down toward your hips rather than flexing your neck.",
+        "Maintain continuous tension throughout the set; never completely relax at the bottom."
+      ],
+      commonMistakes: [
+        "Yanking on the neck with hands, creating cervical strain.",
+        "Arching the lower back off the mat during the descent."
+      ]
+    }
+  },
+  {
+    id: "crunches",
+    slug: "crunches",
+    dayId: "abs",
+    dayName: "Dedicated Abs Protocol",
+    title: "Crunches",
+    subtitle: "Upper Abdominal Wall Isolation & Peak Squeeze",
+    primaryMuscles: ["Rectus Abdominis (Upper)"],
+    secondaryMuscles: ["Transverse Abdominis"],
+    equipment: "Floor Mat / Bodyweight",
+    betweenExerciseRest: 60,
+    generalFormCue: "Focus on pulling your ribcage straight toward your pelvis. Exhale forcefully on the squeeze and control the negative descent.",
+    demoImage: "/images/exercises/crunches.jpg",
+    sets: [
+      { setNumber: 1, reps: "20-30 Reps", restSeconds: 45, notes: "Full compression at peak contraction, 45s rest" },
+      { setNumber: 2, reps: "20-30 Reps", restSeconds: 45, notes: "Exhale on every curl, 45s rest" },
+      { setNumber: 3, reps: "20-30 Reps", restSeconds: 60, notes: "Final peak pump, 60s transition rest to Leg Lifts" },
+    ],
+    howToPerform: {
+      setup: [
+        "Lie supine on a supportive exercise mat with knees bent at 90 degrees.",
+        "Position hands lightly at your temples to keep your chest open and neck neutral.",
+        "Draw your belly button inward toward your spine to brace the transverse abdominis."
+      ],
+      execution: [
+        "Exhale deeply and roll your upper spine up, concentrating all effort into the upper abdominal fibers.",
+        "Hold peak contraction for a strict 1-second pause while pulling the ribcage tightly downward.",
+        "Inhale and return slowly to the mat under tension."
+      ],
+      proTips: [
+        "Fix your gaze at a 45-degree angle toward the ceiling to keep your airway open and neck relaxed.",
+        "Focus on quality and contraction depth over rapid rep speed."
+      ],
+      commonMistakes: [
+        "Using momentum or swinging arms to generate lift.",
+        "Lifting the lower back completely off the floor (this is a crunch, not a full sit-up)."
+      ]
+    }
+  },
+  {
+    id: "leg-lifts-floor",
+    slug: "leg-lifts-floor",
+    dayId: "abs",
+    dayName: "Dedicated Abs Protocol",
+    title: "Leg Lifts on Floor",
+    subtitle: "Lower Abdominals & Core Anti-Extension Stability",
+    primaryMuscles: ["Lower Rectus Abdominis"],
+    secondaryMuscles: ["Hip Flexors", "Transverse Abdominis"],
+    equipment: "Floor Mat / Bodyweight",
+    betweenExerciseRest: 60,
+    generalFormCue: "Lie flat on the floor, press your lower back firmly into the mat. Raise legs smoothly and lower under control without arching your spine.",
+    demoImage: "/images/exercises/leg-lifts-floor.jpg",
+    sets: [
+      { setNumber: 1, reps: "15-20 Reps", restSeconds: 30, notes: "Lower back glued to mat, 30s rest" },
+      { setNumber: 2, reps: "15-20 Reps", restSeconds: 30, notes: "Control the eccentric descent, 30s rest" },
+      { setNumber: 3, reps: "15-20 Reps", restSeconds: 60, notes: "Max reps to lower ab burn, 60s transition rest to Bicycle Crunches" },
+    ],
+    howToPerform: {
+      setup: [
+        "Lie on your back with legs fully extended together and arms resting along your sides or hands tucked under glutes for lumbar support.",
+        "Lock your pelvis into posterior tilt, eliminating any gap between your lower spine and the floor."
+      ],
+      execution: [
+        "Keeping legs straight with toes pointed, elevate legs toward the ceiling until hips reach 90 degrees.",
+        "Squeeze the lower abdominals at the top position.",
+        "Lower legs slowly over 2-3 seconds until heels hover just 1-2 inches above the mat, keeping lower back glued down."
+      ],
+      proTips: [
+        "If your lower back begins peeling off the mat, stop the descent at that height and reverse.",
+        "Breathe steadily: exhale on the lift, inhale on the descent."
+      ],
+      commonMistakes: [
+        "Letting heels slam into the floor between reps.",
+        "Arching lumbar spine under the load of the legs."
+      ]
+    }
+  },
+  {
+    id: "bicycle-crunches",
+    slug: "bicycle-crunches",
+    dayId: "abs",
+    dayName: "Dedicated Abs Protocol",
+    title: "Bicycle Crunches",
+    subtitle: "Obliques & Rotational Core Kinetic Chain",
+    primaryMuscles: ["External & Internal Obliques"],
+    secondaryMuscles: ["Rectus Abdominis", "Hip Flexors"],
+    equipment: "Floor Mat / Bodyweight",
+    betweenExerciseRest: 60,
+    generalFormCue: "Rotate torso smoothly side to side, bringing opposite elbow to opposite knee while extending the alternate leg. Steady rhythm.",
+    demoImage: "/images/exercises/bicycle-crunches.jpg",
+    sets: [
+      { setNumber: 1, reps: "30 Reps", restSeconds: 45, notes: "Continuous alternating rotation, 45s rest" },
+      { setNumber: 2, reps: "30 Reps", restSeconds: 45, notes: "Full oblique contraction each rep, 45s rest" },
+      { setNumber: 3, reps: "30 Reps", restSeconds: 60, notes: "30 fast controlled reps, 60s transition rest to Cable Pulldown" },
+    ],
+    howToPerform: {
+      setup: [
+        "Lie flat on your back with knees bent at 90 degrees in tabletop position, hands behind ears.",
+        "Engage your abs to lift shoulder blades slightly off the floor."
+      ],
+      execution: [
+        "Extend your right leg straight out at a 45-degree angle while rotating your right elbow toward your left knee.",
+        "Switch sides smoothly in a pedal motion, bringing left elbow to right knee while extending the left leg.",
+        "Continue alternating rhythmically for the complete rep target."
+      ],
+      proTips: [
+        "Rotate through your ribcage and shoulders, not just flapping your elbows back and forth.",
+        "Maintain a controlled cadence to maximize time under tension."
+      ],
+      commonMistakes: [
+        "Rushing reps with loose form and incomplete thoracic rotation.",
+        "Pulling the neck with hands."
+      ]
+    }
+  },
+  {
+    id: "cable-ab-pull-down",
+    slug: "cable-ab-pull-down",
+    dayId: "abs",
+    dayName: "Dedicated Abs Protocol",
+    title: "Cable AB Pull Down",
+    subtitle: "Full Abdominal Wall Under Progressive Resistance",
+    primaryMuscles: ["Rectus Abdominis (Total Wall)"],
+    secondaryMuscles: ["Serratus Anterior", "Obliques"],
+    equipment: "Cable Machine + Rope Attachment",
+    betweenExerciseRest: 0,
+    generalFormCue: "Kneel under high cable pulley holding rope at temples. Curl your torso down into your knees through abdominal flexion, not by sitting back on heels.",
+    demoImage: "/images/exercises/cable-ab-pull-down.jpg",
+    sets: [
+      { setNumber: 1, reps: "20-30 Reps", restSeconds: 45, notes: "Lock hips in place, isolate ab curl, 45s rest" },
+      { setNumber: 2, reps: "20-30 Reps", restSeconds: 45, notes: "Progressive weight tension, 45s rest" },
+      { setNumber: 3, reps: "20-30 Reps", restSeconds: 45, notes: "Final heavy burn set to total core exhaustion" },
+    ],
+    howToPerform: {
+      setup: [
+        "Attach a rope to a high pulley. Kneel on a mat roughly 2 feet away facing or facing away from the stack.",
+        "Hold the rope handles beside your ears or forehead, keeping hands pinned in place."
+      ],
+      execution: [
+        "Hips stay locked stationary in space with glutes tight. Do not sit back onto your heels.",
+        "Contract your abs and curl your spine downward, bringing your elbows towards your mid-thighs.",
+        "Pause and squeeze your entire core wall for 1 second, then slowly uncurl back to the starting stretch."
+      ],
+      proTips: [
+        "Treat the spine like a flexible rolling wheel, rounding down and expanding up.",
+        "All movement should originate in the abdominal wall, not from the hip hinge."
+      ],
+      commonMistakes: [
+        "Sitting backward onto calves, turning the movement into a hip exercise.",
+        "Using arm pull strength instead of abdominal flexion."
+      ]
+    }
+  }
+];
+
+export const CALVES_EXERCISES: Exercise[] = [
+  {
+    id: "calf-exercise-dumbbells",
+    slug: "calf-exercise-dumbbells",
+    dayId: "calves",
+    dayName: "Dedicated Calf Protocol",
+    title: "Calf Exercise w/ Dumbbells",
+    subtitle: "Gastrocnemius Lateral & Medial Head Density",
+    primaryMuscles: ["Gastrocnemius (Calf Diamond)"],
+    secondaryMuscles: ["Soleus", "Tibialis"],
+    equipment: "Dumbbells + Elevation Step/Block",
+    betweenExerciseRest: 75,
+    generalFormCue: "Hold heavy dumbbells at your sides. Stand on the edge of a plate or step. Full stretch at the bottom, explode upward onto big toes, and hold 1s at peak.",
+    demoImage: "/images/exercises/dumbbell-calf-raises.png",
+    sets: [
+      { setNumber: 1, reps: "15-20 Reps", restSeconds: 40, notes: "Moderate warm-up set, full depth stretch, 40s rest" },
+      { setNumber: 2, reps: "15-20 Reps", restSeconds: 40, notes: "Deep bottom pause, hard squeeze at top, 40s rest" },
+      { setNumber: 3, reps: "15-20 Reps", restSeconds: 40, notes: "Heavy working set under strict control, 40s rest" },
+      { setNumber: 4, reps: "15-20 Reps", restSeconds: 75, notes: "Final heavy failure set. Rest 75s before Calf Press w/ Machine" },
+    ],
+    howToPerform: {
+      setup: [
+        "Hold a pair of dumbbells at your sides with arms hanging long.",
+        "Place the balls of both feet firmly on the elevated edge of an aerobic step or weight plate.",
+        "Keep your spine tall, chest upright, and core braced."
+      ],
+      execution: [
+        "Lower your heels down below the step edge until you feel a deep, full stretch in the Achilles tendon and calf belly.",
+        "Pause for 2 full seconds at the bottom stretch to dissipate elastic tendon recoil.",
+        "Drive forcefully upward onto your big toes and squeeze the calves at maximum plantarflexion for 1 second."
+      ],
+      proTips: [
+        "Pushing through the balls of the big toes maximizes engagement of the medial gastrocnemius head.",
+        "Never bounce out of the bottom stretch."
+      ],
+      commonMistakes: [
+        "Bouncing rapidly without pausing at the stretch.",
+        "Rolling ankles outward during the press."
+      ]
+    }
+  },
+  {
+    id: "calf-press-machine",
+    slug: "calf-press-machine",
+    dayId: "calves",
+    dayName: "Dedicated Calf Protocol",
+    title: "Calf Press w/ Machine",
+    subtitle: "Soleus & Gastrocnemius High-Load Hypertrophy",
+    primaryMuscles: ["Soleus (Lower Calf Width)"],
+    secondaryMuscles: ["Gastrocnemius"],
+    equipment: "Leg Press Machine / Seated Calf Machine",
+    betweenExerciseRest: 0,
+    generalFormCue: "Place the balls of your feet on the lower edge of the leg press or machine footplate with knees slightly bent. Full Achilles stretch, drive forward through toes.",
+    demoImage: "/images/exercises/machine-calf-press.png",
+    sets: [
+      { setNumber: 1, reps: "15-20 Reps", restSeconds: 40, notes: "2-second stretch pause at bottom, 40s rest" },
+      { setNumber: 2, reps: "15-20 Reps", restSeconds: 40, notes: "Explosive toe press, 1s top contraction, 40s rest" },
+      { setNumber: 3, reps: "15-20 Reps", restSeconds: 40, notes: "Final all-out burn set to mechanical failure" },
+    ],
+    howToPerform: {
+      setup: [
+        "Sit into the leg press machine and position the balls of your feet on the bottom edge of the sled platform.",
+        "Disengage safety levers and press sled out, maintaining a soft 5-degree bend in knees (never lock knees out)."
+      ],
+      execution: [
+        "Slowly dorsiflex ankles, allowing the sled weight to push toes toward you for a deep calf stretch.",
+        "Pause 2 seconds at the bottom stretch.",
+        "Explosively press through the balls of your feet forward to full calf contraction, holding for 1 second."
+      ],
+      proTips: [
+        "Keep knees soft throughout; all articulation must occur solely at the ankle joint.",
+        "Use full range of motion rather than short partial pumps."
+      ],
+      commonMistakes: [
+        "Hyperextending knees under heavy sled load.",
+        "Allowing toes to slip off the bottom platform edge."
+      ]
+    }
+  }
+];
+
+export const ABS_WORKOUT_DAY: WorkoutDay = {
+  id: "abs",
+  slug: "abs",
+  name: "Abs Protocol",
+  tagline: "Sequential high-density core protocol from Evan Austin's notebook (5 moves)",
+  totalExercises: 5,
+  estimatedDuration: "15 - 20 min",
+  targetIntensity: "High abdominal burn & density (RPE 9)",
+  badge: "Dedicated Core",
+  exercises: ABS_EXERCISES
+};
+
+export const CALVES_WORKOUT_DAY: WorkoutDay = {
+  id: "calves",
+  slug: "calves",
+  name: "Calves Protocol",
+  tagline: "High-volume sequential calf hypertrophy protocol from Evan Austin's notebook (2 moves)",
+  totalExercises: 2,
+  estimatedDuration: "12 - 15 min",
+  targetIntensity: "Maximum calf pump & deep stretch (RPE 9)",
+  badge: "Dedicated Calves",
+  exercises: CALVES_EXERCISES
+};
+
+export const ALL_WORKOUT_DAYS: WorkoutDay[] = [
+  ...WORKOUT_DAYS,
+  ABS_WORKOUT_DAY,
+  CALVES_WORKOUT_DAY
+];
+
 export function getAllExercises(): Exercise[] {
-  return WORKOUT_DAYS.flatMap((day) => day.exercises);
+  return [
+    ...WORKOUT_DAYS.flatMap((day) => day.exercises),
+    ...ABS_EXERCISES,
+    ...CALVES_EXERCISES,
+  ];
 }
 
 export function getExerciseBySlug(slug: string): Exercise | undefined {
@@ -1468,7 +1922,7 @@ export function getExerciseBySlug(slug: string): Exercise | undefined {
 }
 
 export function getWorkoutDayById(id: string): WorkoutDay | undefined {
-  return WORKOUT_DAYS.find((day) => day.id === id || day.slug === id);
+  return ALL_WORKOUT_DAYS.find((day) => day.id === id || day.slug === id);
 }
 
 export function getFinisherRoutineForWorkout(workoutNumber: number): FinisherRoutine {
