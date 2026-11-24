@@ -716,12 +716,148 @@ export default function Home() {
       {/* SECTION 5: Gallery */}
       <GallerySection />
 
+      {/* SECTION 5B: FAQs */}
+      <FaqSection />
+
       {/* SECTION 6: Contact */}
       <ContactSection />
 
     </main>
   );
 }
+
+const homeFaqs = [
+  {
+    id: "01",
+    question: "Who is Coach Evan's 1-on-1 coaching built for?",
+    answer: "My coaching is for anyone ready to drop the excuses and commit to real lifestyle change — whether you are a beginner building your foundation, an experienced lifter stuck at a plateau, or an athlete preparing to peak. You bring the commitment; I provide the direction, knowledge, and accountability."
+  },
+  {
+    id: "02",
+    question: "How quickly will I see physical results?",
+    answer: "I won't promise overnight results or sell you a quick fix. Meaningful transformation comes from consistency, dedication, and hard work over time. When you show up daily and follow the protocol, you'll feel the shift in discipline, strength, and confidence within weeks — and the visual transformation follows naturally."
+  },
+  {
+    id: "03",
+    question: "How are the workout splits and training protocols delivered?",
+    answer: "All training splits — including Leg Day, Arm Day, Push/Pull hypertrophy blocks, cardio protocols, and finishers — are accessible directly inside our interactive training platform with exact sets, rep targets, rest timers, and anatomical movement cues."
+  },
+  {
+    id: "04",
+    question: "What does 'mind-muscle connection' mean in your training philosophy?",
+    answer: "You're building more than just muscle. Developing a true mind-muscle connection means training with deliberate control, proper biomechanics, and full mental focus on every rep rather than just moving weight from point A to point B."
+  },
+  {
+    id: "05",
+    question: "Do you provide nutrition guidance and form feedback?",
+    answer: "Yes. Depending on your coaching tier, you receive macronutrient timing guidance tailored around your training window, weekly progress audits, and direct video form analysis where I break down your bar path, tempo, and positioning."
+  },
+  {
+    id: "06",
+    question: "Can I upgrade or switch my coaching tier as I progress?",
+    answer: "Absolutely. All coaching plans are month-to-month with zero hidden contracts. As your foundation solidifies and your goals evolve toward progressive overload or elite 1-on-1 prep, we adjust your game plan accordingly."
+  }
+];
+
+const FaqSection = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  return (
+    <section id="faqs" className="relative w-full bg-[#070707] text-white py-28 lg:py-36 border-t border-white/5 overflow-hidden">
+      {/* Subtle Ambient Red Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/5 blur-[150px] rounded-full pointer-events-none z-0" />
+
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
+        <div className="flex flex-col lg:flex-row gap-14 lg:gap-20">
+          
+          {/* Left Column: Editorial Header & Philosophy Callout */}
+          <div className="lg:w-5/12 flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-400 flex items-center gap-2 mb-6">
+                <span className="text-red-600">[</span> FREQUENTLY ASKED QUESTIONS <span className="text-red-600">]</span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.08] uppercase mb-6">
+                STRAIGHT <span className="text-red-600">ANSWERS.</span><br />
+                ZERO <span className="text-neutral-500">FLUFF.</span>
+              </h2>
+
+              <p className="text-sm md:text-base text-neutral-400 font-light leading-relaxed max-w-md mb-8">
+                Everything you need to know before stepping into the work. No shortcuts, no gimmicks — just clear direction and real accountability.
+              </p>
+            </div>
+
+            <div className="p-6 md:p-8 rounded-2xl bg-[#101010] border border-white/10">
+              <p className="text-xs font-mono uppercase tracking-[0.2em] text-red-500 font-bold mb-2">
+                THE WALKING RÉSUMÉ STANDARD
+              </p>
+              <p className="text-sm text-neutral-300 font-light leading-relaxed mb-6">
+                &ldquo;When you respect yourself enough to show up, put in the work, and keep the promises you make to yourself, that confidence becomes visible. People notice the difference before you even say a word.&rdquo;
+              </p>
+              <Link
+                href="/#contact"
+                className="inline-flex items-center gap-3 text-xs font-mono uppercase tracking-widest font-bold text-white hover:text-red-500 transition-colors"
+              >
+                <span>Still have a question? Ask Evan directly</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column: Interactive Accordion */}
+          <div className="lg:w-7/12 flex flex-col divide-y divide-white/10 border-t border-b border-white/10">
+            {homeFaqs.map((item, idx) => {
+              const isOpen = openIndex === idx;
+              return (
+                <div key={item.id} className="py-6 md:py-7">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIndex(isOpen ? null : idx)}
+                    className="w-full flex items-start justify-between gap-6 text-left group cursor-pointer"
+                  >
+                    <div className="flex items-baseline gap-4 md:gap-6">
+                      <span className={`text-xs font-mono font-bold tracking-widest transition-colors ${isOpen ? "text-red-500" : "text-neutral-500 group-hover:text-neutral-300"}`}>
+                        {item.id}
+                      </span>
+                      <h3 className={`text-lg md:text-xl font-bold tracking-tight transition-colors ${isOpen ? "text-white" : "text-neutral-200 group-hover:text-white"}`}>
+                        {item.question}
+                      </h3>
+                    </div>
+
+                    <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300 ${
+                      isOpen
+                        ? "bg-red-600 border-red-600 text-white rotate-45"
+                        : "border-white/20 text-neutral-400 group-hover:border-white group-hover:text-white"
+                    }`}>
+                      <span className="text-lg leading-none font-light">+</span>
+                    </div>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <p className="pt-4 pl-8 md:pl-11 pr-4 text-sm md:text-[15px] text-neutral-400 font-light leading-relaxed">
+                          {item.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const ContactSection = () => {
   const containerRef = useRef<HTMLElement>(null);
