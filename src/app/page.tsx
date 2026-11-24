@@ -220,8 +220,8 @@ const albums = [
     title: "ASPIRE",
     count: "TO INSPIRE",
     images: [
-      "/images/media_1789842357428.png",
-      "/images/media_1789842333302.png"
+      "/images/media_1789842357428.png?v=5",
+      "/images/media_side_pose.jpg?v=5"
     ]
   },
   {
@@ -239,7 +239,7 @@ const albums = [
     count: "OR GO HOME",
     images: [
       "/images/media_1789842373916.png",
-      "/images/media_1789842357428.png"
+      "/images/media_1789842357428.png?v=5"
     ]
   },
   {
@@ -247,7 +247,7 @@ const albums = [
     title: "OZARKS",
     count: "LIFESTYLE",
     images: [
-      "/images/media_1789842333302.png",
+      "/images/media_1789842333302.png?v=2",
       "/images/media_1789842314508.png"
     ]
   }
@@ -351,15 +351,15 @@ const GallerySection = () => {
                   >
                      {isActive ? (
                        isMobile ? (
-                         <img src={album.images[0]} className="w-full h-full object-cover object-top grayscale transition-all duration-700 rounded-sm shadow-2xl" />
+                         <img src={album.images[0]} className="w-full h-full object-cover object-center grayscale transition-all duration-700 rounded-sm shadow-2xl" />
                        ) : (
                          <>
-                           <img src={album.images[0]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
-                           <img src={album.images[1]} className="w-full h-1/2 object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
+                           <img src={album.images[0]} className="w-full h-1/2 object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
+                           <img src={album.images[1]} className="w-full h-1/2 object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 rounded-sm shadow-2xl" />
                          </>
                        )
                      ) : (
-                       <img src={album.images[0]} className="w-full h-full object-cover object-top grayscale opacity-50 hover:opacity-100 transition-all duration-700 rounded-sm shadow-xl" />
+                       <img src={album.images[0]} className="w-full h-full object-cover object-center grayscale opacity-50 hover:opacity-100 transition-all duration-700 rounded-sm shadow-xl" />
                      )}
                   </motion.div>
                   
@@ -444,7 +444,7 @@ export default function Home() {
     offset: ["start 85%", "center 35%"]
   });
 
-  const headingText = "I'm a coach, athlete, and believer in doing the work when nobody is watching. No shortcuts. No excuses. Just progress.";
+  const headingText = "Welcome! I'm Evan Austin. Think of your body as a walking résumé — it represents the discipline, commitment, and hard work you've invested in yourself.";
   const headingWords = headingText.split(" ");
 
   return (
@@ -493,9 +493,16 @@ export default function Home() {
             
             <motion.p 
               variants={driftFromRight} transition={{ delay: 0.3 }}
-              className="text-base md:text-lg lg:text-xl text-white/70 max-w-md mx-auto lg:mx-0 font-light leading-relaxed mb-12 lg:mb-0"
+              className="text-base md:text-lg lg:text-xl text-white/75 max-w-md mx-auto lg:mx-0 font-light leading-relaxed mb-5"
             >
-              Personalized coaching for people who are ready to get stronger, move better, and become the most disciplined version of themselves.
+              My goal is to provide my clients with the knowledge, direction, and guidance needed to build not only a stronger, healthier body but also the mindset that comes with it.
+            </motion.p>
+
+            <motion.p
+              variants={driftFromRight} transition={{ delay: 0.35 }}
+              className="text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-red-500 font-bold mb-12 lg:mb-0"
+            >
+              &ldquo;You can&apos;t fake results. You have to earn them.&rdquo;
             </motion.p>
           </div>
 
@@ -565,7 +572,7 @@ export default function Home() {
               {/* Heading */}
               <h2 
                 ref={headingRef}
-                className="text-3xl md:text-4xl lg:text-5xl xl:text-[3.25rem] font-bold leading-[1.15] tracking-tight mb-16 uppercase"
+                className="text-3xl md:text-4xl lg:text-5xl xl:text-[3.1rem] font-bold leading-[1.15] tracking-tight mb-10 uppercase"
               >
                 {headingWords.map((word, i) => {
                   const start = i / headingWords.length;
@@ -578,6 +585,50 @@ export default function Home() {
                   );
                 })}
               </h2>
+
+              {/* Full About Us Narrative & Philosophy */}
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.2 }}
+                variants={driftUp}
+                className="mb-14 space-y-6 bg-[#101010] border border-white/10 rounded-2xl p-6 md:p-10"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 text-sm md:text-[15px] text-neutral-300 font-light leading-relaxed">
+                  <div className="space-y-4">
+                    <p>
+                      <strong className="text-white font-semibold">Welcome! I&apos;m Evan Austin.</strong> My goal is to provide my clients with the knowledge, direction, and guidance needed to build not only a stronger, healthier body but also the mindset that comes with it.
+                    </p>
+                    <p>
+                      When you step into the world of fitness, understand that you&apos;re building more than muscle. You&apos;re developing a <span className="text-white font-medium">mind-muscle connection, discipline, and a mindset</span> that will carry over into every aspect of your life. This isn&apos;t a temporary commitment or a quick fix. <span className="text-red-500 font-semibold">It&apos;s a lifestyle.</span>
+                    </p>
+                    <p>
+                      There are no shortcuts to real results. Meaningful transformation comes from consistency, dedication, and hard work over time. The changes you&apos;re looking for don&apos;t happen overnight, but when you commit to the process, the results go far beyond what you see in the mirror.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <p>
+                      When you respect yourself enough to show up, put in the work, and keep the promises you make to yourself, that confidence becomes visible. <span className="text-white font-medium">People notice the difference before you even say a word.</span>
+                    </p>
+                    <p>
+                      Think of your body as a <span className="text-white font-semibold">walking résumé</span>. It represents the discipline, commitment, and hard work you&apos;ve invested in yourself. It&apos;s a reflection of what happens when you refuse to make excuses and choose to stay consistent.
+                    </p>
+                    <p>
+                      My mission is to help you become a stronger version of yourself, both physically and mentally. I can&apos;t do the work for you, and I won&apos;t promise overnight results. What I can offer is the proper guidance, knowledge, accountability, and support to help you reach your goals and build a better future.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <p className="text-sm md:text-base text-white font-medium">
+                    You bring the commitment. I&apos;ll provide the direction. Together, we&apos;ll put in the work and make the transformation happen.
+                  </p>
+                  <span className="inline-flex items-center px-4 py-2 rounded-full bg-red-600/15 border border-red-500/40 text-red-400 font-mono text-xs uppercase tracking-widest font-bold shrink-0">
+                    Remember: You can&apos;t fake results. You have to earn them.
+                  </span>
+                </div>
+              </motion.div>
 
               {/* Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -647,7 +698,7 @@ export default function Home() {
             initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.5 }} variants={driftUp} transition={{ delay: 0.5 }}
             className="w-full flex justify-between items-center mt-24 pt-10 border-t border-neutral-900/50 overflow-x-auto gap-8 pb-4"
           >
-            {['TRAIN WITH PURPOSE', 'BUILD YOUR FOUNDATION', 'BREAK YOUR PLATEAU', 'NO SHORTCUTS', 'NO EXCUSES', 'JUST PROGRESS'].map((logo, i) => (
+            {['YOUR BODY IS A WALKING RÉSUMÉ', 'YOU CAN\'T FAKE RESULTS — EARN THEM', 'MIND-MUSCLE CONNECTION', 'IT\'S A LIFESTYLE, NOT A QUICK FIX', 'YOU BRING THE COMMITMENT', 'I\'LL PROVIDE THE DIRECTION'].map((logo, i) => (
               <div key={i} className="flex items-center gap-2 text-neutral-400 font-bold uppercase tracking-[0.2em] text-[10px] whitespace-nowrap select-none">
                 <div className="w-2 h-2 rounded-full bg-red-600" />
                 {logo}
@@ -679,7 +730,7 @@ const ContactSection = () => {
     offset: ["start 85%", "center 40%"]
   });
 
-  const paragraphText = "Whether you are looking to build strength, drop fat, or completely overhaul your lifestyle, the first step starts here. No excuses.";
+  const paragraphText = "You bring the commitment. I'll provide the direction. Together, we'll put in the work and make the transformation happen. Remember: You can't fake results. You have to earn them.";
   const paragraphWords = paragraphText.split(" ");
 
   const emailStr = "contact@evanaustin.com";

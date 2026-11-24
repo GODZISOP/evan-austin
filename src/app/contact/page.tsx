@@ -68,10 +68,22 @@ export default function ContactPage() {
           
           <motion.p 
             variants={driftUp}
-            className="text-white/60 text-lg md:text-xl font-light leading-relaxed max-w-md mb-12"
+            className="text-white/75 text-lg md:text-xl font-light leading-relaxed max-w-md mb-6"
           >
-            Whether you are looking to build strength, drop fat, or completely overhaul your lifestyle, the first step starts here. No excuses.
+            You bring the commitment. I&apos;ll provide the direction. Together, we&apos;ll put in the work and make the transformation happen.
           </motion.p>
+
+          <motion.div
+            variants={driftUp}
+            className="mb-12 p-4 rounded-xl bg-white/5 border-l-2 border-red-600 max-w-md"
+          >
+            <p className="text-xs text-neutral-300 leading-relaxed italic mb-2">
+              &ldquo;Think of your body as a walking résumé. It represents the discipline, commitment, and hard work you&apos;ve invested in yourself.&rdquo;
+            </p>
+            <p className="text-[11px] font-mono uppercase tracking-widest text-red-500 font-bold">
+              Remember: You can&apos;t fake results. You have to earn them.
+            </p>
+          </motion.div>
           
           <motion.div variants={driftUp} className="flex flex-col gap-6">
             <div>

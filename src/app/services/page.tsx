@@ -134,9 +134,11 @@ export default function ServicesPage() {
             COACHING <span className="text-red-600">SERVICES</span> & TIERS
           </h1>
 
-          <p className="text-base sm:text-lg text-neutral-400 leading-relaxed font-light">
-            Whether you need structured hypertrophy splits or direct 1-on-1 contest preparation, 
-            every program is built on one standard: zero excuses and relentless progression.
+          <p className="text-base sm:text-lg text-neutral-300 leading-relaxed font-light mb-4">
+            Think of your body as a walking résumé — it represents the discipline, commitment, and hard work you&apos;ve invested in yourself. I can&apos;t do the work for you, and I won&apos;t promise overnight results. What I offer is the proper guidance, knowledge, accountability, and support to help you reach your goals.
+          </p>
+          <p className="text-xs font-mono uppercase tracking-[0.2em] text-red-500 font-bold">
+            Remember: You can&apos;t fake results. You have to earn them.
           </p>
         </div>
 
@@ -259,8 +261,8 @@ export default function ServicesPage() {
             <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               EXPLORE OUR SPLITS OR APPLY FOR COACHING
             </h3>
-            <p className="text-xs sm:text-sm text-neutral-400 mt-2 max-w-xl">
-              Inspect our official Leg Day and Arm Day routines right now, or message Evan directly to start your 1-on-1 assessment.
+            <p className="text-xs sm:text-sm text-neutral-300 mt-2 max-w-xl">
+              You bring the commitment. I&apos;ll provide the direction. Together, we&apos;ll put in the work and make the transformation happen.
             </p>
           </div>
 
